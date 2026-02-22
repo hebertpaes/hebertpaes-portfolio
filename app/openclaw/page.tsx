@@ -34,8 +34,11 @@ export default function OpenClawPage() {
           <span className="block text-cyan-300 mt-2">Automação pessoal + IA operacional</span>
         </h1>
 
-        <p className="text-base md:text-xl text-slate-300 max-w-4xl mb-10">
+        <p className="text-base md:text-xl text-slate-300 max-w-4xl mb-3">
           Esta página reúne como estou usando OpenClaw para acelerar execução, organizar contexto e transformar pedidos em entregas reais com velocidade.
+        </p>
+        <p className="text-xs md:text-sm text-amber-200/90 mb-10">
+          O botão de chat local funciona no MacBook com OpenClaw ativo (endereço 127.0.0.1).
         </p>
 
         <div className="grid md:grid-cols-3 gap-4 mb-10">
@@ -60,6 +63,12 @@ export default function OpenClawPage() {
         </section>
 
         <section className="flex flex-wrap gap-3">
+          <a
+            href="http://127.0.0.1:18789/chat?session=agent%3Acodex%3Acodex"
+            className="bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold px-5 py-3 rounded-xl transition-all"
+          >
+            Abrir chat do agente (MacBook)
+          </a>
           <a
             href="https://docs.openclaw.ai"
             target="_blank"

@@ -3,14 +3,29 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+type Episode = {
+  id: string;
+  title: string;
+  summary: string;
+  duration: string;
+  link: string;
+};
+
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [episodes, setEpisodes] = useState<Episode[]>([]);
+  const [saving, setSaving] = useState(false);
+  const [notice, setNotice] = useState('');
   const router = useRouter();
 
   useEffect(() => {
     const auth = localStorage.getItem('adminAuth');
     if (auth === 'true') {
       setIsAuthenticated(true);
+      fetch('/api/prototype/podcast')
+        .then((r) => r.json())
+        .then((d) => setEpisodes(d.episodes || []))
+        .catch(() => setEpisodes([]));
     } else {
       router.push('/admin');
     }
@@ -19,6 +34,32 @@ export default function AdminDashboard() {
   const handleLogout = () => {
     localStorage.removeItem('adminAuth');
     router.push('/admin');
+  };
+
+  const updateEpisode = (id: string, field: keyof Episode, value: string) => {
+    setEpisodes((prev) => prev.map((e) => (e.id === id ? { ...e, [field]: value } : e)));
+  };
+
+  const saveEpisodes = async () => {
+    setSaving(true);
+    setNotice('');
+    try {
+      const res = await fetch('/api/prototype/podcast', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ episodes }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setNotice('Podcast atualizado com sucesso.');
+      } else {
+        setNotice('Falha ao salvar podcast.');
+      }
+    } catch {
+      setNotice('Erro ao salvar podcast.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (!isAuthenticated) {
@@ -37,7 +78,8 @@ export default function AdminDashboard() {
             <div className="flex items-center">
               <h1 className="text-xl font-bold text-white">Admin Dashboard</h1>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center gap-2">
+              <a href="/podcast" className="px-4 py-2 text-sm font-medium text-white bg-violet-600 hover:bg-violet-700 rounded-lg transition-colors">Ver Podcast</a>
               <button
                 onClick={handleLogout}
                 className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
@@ -50,21 +92,29 @@ export default function AdminDashboard() {
       </nav>
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-              <h3 className="text-lg font-medium text-white mb-2">Bem-vindo!</h3>
-              <p className="text-gray-400">Você está logado como administrador.</p>
+        <div className="px-4 py-6 sm:px-0 space-y-6">
+          <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+            <h3 className="text-lg font-medium text-white mb-4">Editor de Podcast</h3>
+            <p className="text-gray-400 mb-4">Edite títulos, descrições e links diretamente daqui.</p>
+
+            <div className="space-y-4">
+              {episodes.map((ep) => (
+                <div key={ep.id} className="bg-gray-900 border border-gray-700 rounded-lg p-4 space-y-2">
+                  <input value={ep.title} onChange={(e) => updateEpisode(ep.id, 'title', e.target.value)} className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" placeholder="Título" />
+                  <input value={ep.summary} onChange={(e) => updateEpisode(ep.id, 'summary', e.target.value)} className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" placeholder="Resumo" />
+                  <div className="grid md:grid-cols-2 gap-2">
+                    <input value={ep.duration} onChange={(e) => updateEpisode(ep.id, 'duration', e.target.value)} className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" placeholder="Duração" />
+                    <input value={ep.link} onChange={(e) => updateEpisode(ep.id, 'link', e.target.value)} className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" placeholder="Link" />
+                  </div>
+                </div>
+              ))}
             </div>
-            
-            <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-              <h3 className="text-lg font-medium text-white mb-2">Projetos</h3>
-              <p className="text-gray-400">Gerencie seus projetos aqui.</p>
-            </div>
-            
-            <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-              <h3 className="text-lg font-medium text-white mb-2">Configurações</h3>
-              <p className="text-gray-400">Ajuste as configurações do site.</p>
+
+            <div className="mt-4 flex items-center gap-3">
+              <button onClick={saveEpisodes} disabled={saving} className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-gray-900 font-bold rounded-lg">
+                {saving ? 'Salvando...' : 'Salvar podcast'}
+              </button>
+              {notice && <span className="text-sm text-cyan-200">{notice}</span>}
             </div>
           </div>
         </div>

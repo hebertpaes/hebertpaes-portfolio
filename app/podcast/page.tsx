@@ -3,16 +3,19 @@ const episodes = [
     title: "Automação pessoal com IA na prática",
     summary: "Como organizar rotina e execução com agentes sem perder controle.",
     duration: "28 min",
+    link: "https://music.youtube.com/playlist?list=OLAK5uy_mDljpGt6-_TCOS9EX1nG7RvQrDTsXJX0k&si=Ys2ZA9hDhSX45ukt",
   },
   {
     title: "Build, deploy e observabilidade sem dor",
     summary: "Estratégias para acelerar entrega com segurança e previsibilidade.",
     duration: "34 min",
+    link: "https://open.spotify.com/search/hebert%20paes",
   },
   {
     title: "Produto, conteúdo e escala",
     summary: "Como unir tecnologia e posicionamento para crescer com consistência.",
     duration: "31 min",
+    link: "https://music.apple.com/br/search?term=hebert%20paes",
   },
 ];
 
@@ -32,9 +35,14 @@ export default function PodcastPage() {
               <p className="text-violet-200 text-xs mb-2">{episode.duration}</p>
               <h2 className="font-bold text-xl mb-2">{episode.title}</h2>
               <p className="text-gray-300 text-sm mb-4">{episode.summary}</p>
-              <button className="bg-violet-500 hover:bg-violet-400 text-white px-4 py-2 rounded-lg text-sm font-semibold">
+              <a
+                href={episode.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-violet-500 hover:bg-violet-400 text-white px-4 py-2 rounded-lg text-sm font-semibold"
+              >
                 Ouvir episódio
-              </button>
+              </a>
             </article>
           ))}
         </section>

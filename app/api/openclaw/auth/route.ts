@@ -101,10 +101,7 @@ export async function GET(req: NextRequest) {
   const clientSecret = process.env[config.clientSecretEnv];
 
   if (!clientId || !clientSecret) {
-    return NextResponse.json(
-      { error: `Missing OAuth credentials for ${provider}`, required: [config.clientIdEnv, config.clientSecretEnv] },
-      { status: 500 }
-    );
+    return NextResponse.redirect(new URL(`/login?error=${provider}_not_configured`, req.url));
   }
 
   const callbackUrl = callbackForProvider(req, provider);

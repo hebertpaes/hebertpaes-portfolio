@@ -1,14 +1,14 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 
 const socialProviders = [
-  { key: "google", name: "Google (Gmail)", className: "bg-white text-slate-900 hover:bg-slate-100 border border-slate-300" },
-  { key: "apple", name: "Apple", className: "bg-black text-white hover:bg-neutral-900 border border-neutral-700" },
-  { key: "microsoft", name: "Microsoft", className: "bg-sky-500 text-white hover:bg-sky-400 border border-sky-300/40" },
-  { key: "github", name: "GitHub", className: "bg-zinc-900 text-white hover:bg-zinc-800 border border-zinc-700" },
-  { key: "linkedin", name: "LinkedIn", className: "bg-blue-700 text-white hover:bg-blue-600 border border-blue-400/40" },
-  { key: "whatsapp", name: "WhatsApp", className: "bg-emerald-500 text-white hover:bg-emerald-400 border border-emerald-300/40" },
+  { key: "google", icon: "🟢", name: "Google (Gmail)", className: "bg-white text-slate-900 hover:bg-slate-100 border border-slate-300" },
+  { key: "apple", icon: "", name: "Apple", className: "bg-black text-white hover:bg-neutral-900 border border-neutral-700" },
+  { key: "microsoft", icon: "🪟", name: "Microsoft", className: "bg-sky-500 text-white hover:bg-sky-400 border border-sky-300/40" },
+  { key: "github", icon: "🐙", name: "GitHub", className: "bg-zinc-900 text-white hover:bg-zinc-800 border border-zinc-700" },
+  { key: "linkedin", icon: "💼", name: "LinkedIn", className: "bg-blue-700 text-white hover:bg-blue-600 border border-blue-400/40" },
+  { key: "whatsapp", icon: "💬", name: "WhatsApp", className: "bg-emerald-500 text-white hover:bg-emerald-400 border border-emerald-300/40" },
 ];
 
 export default function LoginPage() {
@@ -22,6 +22,16 @@ export default function LoginPage() {
   const [message, setMessage] = useState("");
 
   const githubUrl = useMemo(() => "/api/openclaw/auth?provider=github&action=start", []);
+  const [errorText, setErrorText] = useState("");
+
+  useEffect(() => {
+    const err = new URLSearchParams(window.location.search).get("error");
+    if (!err) return;
+    if (err === "auth_required") return setErrorText("Faça login para acessar os agentes.");
+    if (err.endsWith("_not_configured")) return setErrorText("Provedor ainda não configurado. Tente outro login.");
+    if (err.includes("oauth")) return setErrorText("Falha na autenticação OAuth. Tente novamente.");
+    setErrorText("Não foi possível autenticar. Tente novamente.");
+  }, []);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -77,7 +87,8 @@ export default function LoginPage() {
         </div>
 
         <h1 className="text-3xl font-black mb-3">{mode === "login" ? "Entrar" : "Criar conta"}</h1>
-        <p className="text-slate-300 mb-6">Acesso da área OpenClaw em hebertpaes.com.</p>
+        <p className="text-slate-300 mb-3">Acesso da área OpenClaw em hebertpaes.com.</p>
+        {errorText && <p className="text-sm text-rose-300 mb-6">{errorText}</p>}
 
         <a
           href={githubUrl}
@@ -93,7 +104,7 @@ export default function LoginPage() {
               href={`/api/openclaw/auth?provider=${provider.key}&action=start`}
               className={`inline-flex items-center justify-center font-semibold rounded-lg px-4 py-3 text-sm ${provider.className}`}
             >
-              Cadastrar com {provider.name}
+              <span className="mr-2">{provider.icon}</span> Cadastrar com {provider.name}
             </a>
           ))}
         </div>

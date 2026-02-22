@@ -92,19 +92,21 @@ export default function LoginPage() {
 
         <a
           href={githubUrl}
-          className="w-full inline-flex items-center justify-center bg-black hover:bg-neutral-900 border border-neutral-700 text-white font-semibold rounded-lg px-4 py-3 mb-4"
+          className="w-full inline-flex items-center justify-center bg-black hover:bg-neutral-900 border border-neutral-700 text-white font-semibold rounded-xl px-4 py-3.5 mb-4 shadow-sm hover:shadow-md active:scale-[0.99] transition-all"
         >
+          <img src="/icons/github.svg" alt="" className="w-5 h-5 mr-2.5" aria-hidden="true" />
           Continuar com GitHub
         </a>
 
-        <div className="grid sm:grid-cols-2 gap-2 mb-6">
+        <div className="grid sm:grid-cols-2 gap-3 mb-6">
           {socialProviders.map((provider) => (
             <a
               key={provider.name}
               href={`/api/openclaw/auth?provider=${provider.key}&action=start`}
-              className={`inline-flex items-center justify-center font-semibold rounded-lg px-4 py-3 text-sm ${provider.className}`}
+              className={`inline-flex items-center justify-center font-semibold rounded-xl px-4 py-3.5 text-sm shadow-sm hover:shadow-md active:scale-[0.99] transition-all ${provider.className}`}
             >
-              <img src={provider.icon} alt="" className="w-4 h-4 mr-2" aria-hidden="true" /> Cadastrar com {provider.name}
+              <img src={provider.icon} alt="" className="w-5 h-5 mr-2.5" aria-hidden="true" />
+              <span className="truncate">Cadastrar com {provider.name}</span>
             </a>
           ))}
         </div>

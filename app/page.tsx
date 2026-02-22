@@ -1,138 +1,154 @@
+const products = [
+  {
+    name: "Camiseta Oficial Hebert Paes",
+    description: "Malha premium, estampa exclusiva e edição limitada.",
+    price: "R$ 89,90",
+    tag: "Mais vendido",
+  },
+  {
+    name: "Boné Signature HP",
+    description: "Boné ajustável com bordado frontal e acabamento premium.",
+    price: "R$ 69,90",
+    tag: "Novo",
+  },
+  {
+    name: "Caneca Studio Session",
+    description: "Caneca de cerâmica 350ml para acompanhar sua playlist.",
+    price: "R$ 49,90",
+    tag: "Oferta",
+  },
+  {
+    name: "Pack Digital Wallpapers + Capa",
+    description: "Kit digital com artes exclusivas para celular e desktop.",
+    price: "R$ 19,90",
+    tag: "Digital",
+  },
+];
+
+const streamingPlatforms = [
+  {
+    name: "Spotify",
+    link: "https://open.spotify.com/search/hebert%20paes%20falcao",
+  },
+  {
+    name: "Apple Music",
+    link: "https://music.apple.com/br/search?term=hebert%20paes%20falcao",
+  },
+  {
+    name: "YouTube Music",
+    link: "https://music.youtube.com/search?q=hebert%20paes%20falcao",
+  },
+  {
+    name: "Deezer",
+    link: "https://www.deezer.com/search/hebert%20paes%20falcao",
+  },
+  {
+    name: "Amazon Music",
+    link: "https://music.amazon.com/search/hebert%20paes%20falcao",
+  },
+  {
+    name: "TIDAL",
+    link: "https://listen.tidal.com/search?q=hebert%20paes%20falcao",
+  },
+  {
+    name: "SoundCloud",
+    link: "https://soundcloud.com/search?q=hebert%20paes%20falcao",
+  },
+  {
+    name: "Palco MP3",
+    link: "https://www.palcomp3.com.br/busca/?q=hebert%20paes%20falcao",
+  },
+];
+
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
-      {/* Hero Section */}
-      <section className="min-h-screen flex items-center justify-center px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-6xl md:text-8xl font-bold text-white mb-6">
-            Hebert Paes
-          </h1>
-          <p className="text-2xl md:text-3xl text-blue-300 mb-8">
-            Desenvolvedor Full Stack & Arquiteto de Nuvem
-          </p>
-          <p className="text-lg md:text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
-            Construindo aplicações web modernas com Next.js, React e Serviços de Nuvem Azure
+    <main className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-950 to-gray-900 text-white">
+      <section className="px-4 pt-24 pb-16 text-center">
+        <div className="max-w-5xl mx-auto">
+          <p className="uppercase tracking-[0.3em] text-blue-300 text-sm mb-4">Hebert Paes Falcao</p>
+          <h1 className="text-5xl md:text-7xl font-black mb-6">Loja Virtual + Música em Todas as Plataformas</h1>
+          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto mb-10">
+            Portfólio atualizado com uma experiência de e-commerce moderna para produtos oficiais e acesso rápido
+            às músicas de Hebert Paes Falcao nos principais serviços de streaming.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
-            <a href="#projects" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-all">
-              Ver Projetos
+            <a href="#loja" className="bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-lg font-semibold transition-all">
+              Entrar na Loja
             </a>
-            <a href="#contact" className="border-2 border-blue-600 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold transition-all">
-              Entre em Contato
+            <a href="#musicas" className="border border-blue-400 hover:bg-blue-500/20 px-8 py-3 rounded-lg font-semibold transition-all">
+              Ouvir Músicas
             </a>
           </div>
         </div>
       </section>
 
-      {/* About Section */}
-      <section id="about" className="min-h-screen flex items-center justify-center px-4 py-20">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-5xl font-bold text-white mb-8 text-center">Sobre Mim</h2>
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 md:p-12">
-            <p className="text-lg text-gray-200 mb-6">
-              Sou um desenvolvedor apaixonado, especializado em construir aplicações web escaláveis
-              usando tecnologias modernas. Com expertise em Next.js, React, TypeScript e
-              serviços de nuvem Azure, crio soluções que são poderosas e elegantes.
-            </p>
-            <p className="text-lg text-gray-200 mb-6">
-              Meu foco é entregar aplicações de alto desempenho com experiências de usuário
-              excepcionais, aproveitando a infraestrutura de nuvem para escalabilidade e confiabilidade ideais.
-            </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-              <div className="bg-white/5 p-4 rounded-lg text-center">
-                <p className="text-blue-400 font-semibold">Next.js</p>
-              </div>
-              <div className="bg-white/5 p-4 rounded-lg text-center">
-                <p className="text-blue-400 font-semibold">React</p>
-              </div>
-              <div className="bg-white/5 p-4 rounded-lg text-center">
-                <p className="text-blue-400 font-semibold">TypeScript</p>
-              </div>
-              <div className="bg-white/5 p-4 rounded-lg text-center">
-                <p className="text-blue-400 font-semibold">Azure</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Projects Section */}
-      <section id="projects" className="min-h-screen flex items-center justify-center px-4 py-20">
+      <section id="loja" className="px-4 py-16">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-5xl font-bold text-white mb-12 text-center">Projetos</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 hover:bg-white/20 transition-all">
-              <h3 className="text-2xl font-bold text-white mb-4">Plataforma E-Commerce</h3>
-              <p className="text-gray-300 mb-4">
-                Solução completa de e-commerce construída com Next.js e serviços Azure
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">Next.js</span>
-                <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">Azure</span>
-                <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">TypeScript</span>
-              </div>
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
+            <div>
+              <h2 className="text-4xl font-bold">Loja Virtual</h2>
+              <p className="text-gray-300 mt-2">Produtos oficiais com visual premium e foco em conversão.</p>
             </div>
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 hover:bg-white/20 transition-all">
-              <h3 className="text-2xl font-bold text-white mb-4">Painel de Nuvem</h3>
-              <p className="text-gray-300 mb-4">
-                Painel de análises em tempo real com integração Azure
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">React</span>
-                <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">Azure CDN</span>
-                <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">Node.js</span>
-              </div>
-            </div>
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 hover:bg-white/20 transition-all">
-              <h3 className="text-2xl font-bold text-white mb-4">Site Portfólio</h3>
-              <p className="text-gray-300 mb-4">
-                Site portfólio moderno implantado no Azure com CDN
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">Next.js</span>
-                <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">Tailwind</span>
-                <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">Azure</span>
-              </div>
-            </div>
+            <button className="bg-emerald-500 hover:bg-emerald-600 text-gray-900 font-bold px-6 py-3 rounded-lg transition-all">
+              Finalizar compra
+            </button>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {products.map((product) => (
+              <article key={product.name} className="bg-white/10 border border-white/10 rounded-2xl p-5 backdrop-blur-sm hover:bg-white/15 transition-all">
+                <span className="inline-block mb-3 text-xs font-semibold bg-blue-500/20 text-blue-200 border border-blue-300/40 px-2 py-1 rounded-full">
+                  {product.tag}
+                </span>
+                <h3 className="text-xl font-bold mb-2">{product.name}</h3>
+                <p className="text-gray-300 text-sm mb-5 min-h-[3rem]">{product.description}</p>
+                <div className="flex items-center justify-between">
+                  <strong className="text-2xl text-emerald-300">{product.price}</strong>
+                  <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-semibold">
+                    Adicionar
+                  </button>
+                </div>
+              </article>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section id="contact" className="min-h-screen flex items-center justify-center px-4 py-20">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-5xl font-bold text-white mb-8">Entre em Contato</h2>
-          <p className="text-xl text-gray-300 mb-12">
-            Estou sempre aberto a discutir novos projetos e oportunidades.
+      <section id="musicas" className="px-4 py-16">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl font-bold mb-4">Músicas de Hebert Paes Falcao</h2>
+          <p className="text-gray-300 mb-8">
+            Acesse as faixas nas plataformas abaixo. Os links abrem diretamente a busca do artista em cada serviço.
           </p>
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 md:p-12">
-            <div className="space-y-6">
-              <div>
-                <p className="text-gray-400 mb-2">E-mail</p>
-                <a href="mailto:contact@hebertpaes.com" className="text-2xl text-blue-400 hover:text-blue-300">
-                  contact@hebertpaes.com
-                </a>
-              </div>
-              <div>
-                <p className="text-gray-400 mb-2">LinkedIn</p>
-                <a href="https://linkedin.com/in/hebertpaes" target="_blank" rel="noopener noreferrer" className="text-2xl text-blue-400 hover:text-blue-300">
-                  linkedin.com/in/hebertpaes
-                </a>
-              </div>
-              <div>
-                <p className="text-gray-400 mb-2">GitHub</p>
-                <a href="https://github.com/hebertpaes" target="_blank" rel="noopener noreferrer" className="text-2xl text-blue-400 hover:text-blue-300">
-                  github.com/hebertpaes
-                </a>
-              </div>
-            </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {streamingPlatforms.map((platform) => (
+              <a
+                key={platform.name}
+                href={platform.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl px-5 py-4 font-semibold transition-all"
+              >
+                Ouvir no {platform.name}
+              </a>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-8 text-center text-gray-400">
-        <p>&copy; 2026 Hebert Paes. Todos os direitos reservados.</p>
+      <section id="contact" className="px-4 py-16">
+        <div className="max-w-4xl mx-auto text-center bg-white/10 border border-white/10 rounded-2xl p-10">
+          <h2 className="text-3xl font-bold mb-4">Contato & Parcerias</h2>
+          <p className="text-gray-300 mb-6">Para shows, publis e projetos digitais, fale com a equipe.</p>
+          <a href="mailto:contact@hebertpaes.com" className="text-blue-300 text-xl hover:text-blue-200">
+            contact@hebertpaes.com
+          </a>
+        </div>
+      </section>
+
+      <footer className="py-10 text-center text-gray-400 border-t border-white/10 mt-8">
+        <p>© 2026 Hebert Paes Falcao. Todos os direitos reservados.</p>
       </footer>
     </main>
   );

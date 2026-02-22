@@ -1,19 +1,19 @@
 const episodes = [
   {
-    title: "Automação pessoal com IA na prática",
-    summary: "Como organizar rotina e execução com agentes sem perder controle.",
+    title: "Hebert Paes",
+    summary: "Conteúdo em áudio disponível nas plataformas.",
     duration: "28 min",
     link: "https://music.youtube.com/playlist?list=OLAK5uy_mDljpGt6-_TCOS9EX1nG7RvQrDTsXJX0k&si=Ys2ZA9hDhSX45ukt",
   },
   {
-    title: "Build, deploy e observabilidade sem dor",
-    summary: "Estratégias para acelerar entrega com segurança e previsibilidade.",
+    title: "Hebert Paes",
+    summary: "Conteúdo em áudio disponível nas plataformas.",
     duration: "34 min",
     link: "https://open.spotify.com/search/hebert%20paes",
   },
   {
-    title: "Produto, conteúdo e escala",
-    summary: "Como unir tecnologia e posicionamento para crescer com consistência.",
+    title: "Hebert Paes",
+    summary: "Conteúdo em áudio disponível nas plataformas.",
     duration: "31 min",
     link: "https://music.apple.com/br/search?term=hebert%20paes",
   },

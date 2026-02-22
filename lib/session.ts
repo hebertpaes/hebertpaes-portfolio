@@ -5,7 +5,7 @@ type SessionData = {
   login: string;
   name?: string;
   email?: string;
-  provider: "github";
+  provider: "github" | "google" | "microsoft" | "apple" | "linkedin" | "whatsapp";
   iat: number;
   exp: number;
 };

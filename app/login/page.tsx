@@ -3,36 +3,12 @@
 import { FormEvent, useMemo, useState } from "react";
 
 const socialProviders = [
-  {
-    name: "Google (Gmail)",
-    href: "https://accounts.google.com/o/oauth2/v2/auth",
-    className: "bg-white text-slate-900 hover:bg-slate-100 border border-slate-300",
-  },
-  {
-    name: "Apple",
-    href: "https://appleid.apple.com/auth/authorize",
-    className: "bg-black text-white hover:bg-neutral-900 border border-neutral-700",
-  },
-  {
-    name: "Microsoft",
-    href: "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
-    className: "bg-sky-500 text-white hover:bg-sky-400 border border-sky-300/40",
-  },
-  {
-    name: "GitHub",
-    href: "https://github.com/login/oauth/authorize",
-    className: "bg-zinc-900 text-white hover:bg-zinc-800 border border-zinc-700",
-  },
-  {
-    name: "LinkedIn",
-    href: "https://www.linkedin.com/oauth/v2/authorization",
-    className: "bg-blue-700 text-white hover:bg-blue-600 border border-blue-400/40",
-  },
-  {
-    name: "WhatsApp",
-    href: "https://wa.me/",
-    className: "bg-emerald-500 text-white hover:bg-emerald-400 border border-emerald-300/40",
-  },
+  { key: "google", name: "Google (Gmail)", className: "bg-white text-slate-900 hover:bg-slate-100 border border-slate-300" },
+  { key: "apple", name: "Apple", className: "bg-black text-white hover:bg-neutral-900 border border-neutral-700" },
+  { key: "microsoft", name: "Microsoft", className: "bg-sky-500 text-white hover:bg-sky-400 border border-sky-300/40" },
+  { key: "github", name: "GitHub", className: "bg-zinc-900 text-white hover:bg-zinc-800 border border-zinc-700" },
+  { key: "linkedin", name: "LinkedIn", className: "bg-blue-700 text-white hover:bg-blue-600 border border-blue-400/40" },
+  { key: "whatsapp", name: "WhatsApp", className: "bg-emerald-500 text-white hover:bg-emerald-400 border border-emerald-300/40" },
 ];
 
 export default function LoginPage() {
@@ -45,20 +21,7 @@ export default function LoginPage() {
   const [twoFactorMethod, setTwoFactorMethod] = useState<"app" | "sms" | "email" | "">("");
   const [message, setMessage] = useState("");
 
-  const githubUrl = useMemo(() => {
-    const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
-    const redirectUri = process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URI || "https://hebertpaes.com/auth/github/callback";
-
-    if (!clientId) return "";
-
-    const params = new URLSearchParams({
-      client_id: clientId,
-      scope: "read:user user:email",
-      redirect_uri: redirectUri,
-    });
-
-    return `https://github.com/login/oauth/authorize?${params.toString()}`;
-  }, []);
+  const githubUrl = useMemo(() => "/api/openclaw/auth?provider=github&action=start", []);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -117,25 +80,17 @@ export default function LoginPage() {
         <p className="text-slate-300 mb-6">Acesso da área OpenClaw em hebertpaes.com.</p>
 
         <a
-          href={githubUrl || "#"}
-          className="w-full inline-flex items-center justify-center bg-black hover:bg-neutral-900 border border-neutral-700 text-white font-semibold rounded-lg px-4 py-3 mb-2"
+          href={githubUrl}
+          className="w-full inline-flex items-center justify-center bg-black hover:bg-neutral-900 border border-neutral-700 text-white font-semibold rounded-lg px-4 py-3 mb-4"
         >
           Continuar com GitHub
         </a>
-
-        {!githubUrl && (
-          <p className="text-xs text-amber-200 mb-4">
-            Configure <code>NEXT_PUBLIC_GITHUB_CLIENT_ID</code> e <code>NEXT_PUBLIC_GITHUB_REDIRECT_URI</code> para ativar o login GitHub real.
-          </p>
-        )}
 
         <div className="grid sm:grid-cols-2 gap-2 mb-6">
           {socialProviders.map((provider) => (
             <a
               key={provider.name}
-              href={provider.href}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={`/api/openclaw/auth?provider=${provider.key}&action=start`}
               className={`inline-flex items-center justify-center font-semibold rounded-lg px-4 py-3 text-sm ${provider.className}`}
             >
               Cadastrar com {provider.name}

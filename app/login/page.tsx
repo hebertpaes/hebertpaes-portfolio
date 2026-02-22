@@ -46,7 +46,18 @@ export default function LoginPage() {
   const [message, setMessage] = useState("");
 
   const githubUrl = useMemo(() => {
-    return "https://github.com/login/oauth/authorize?client_id=SEU_GITHUB_CLIENT_ID&scope=read:user%20user:email";
+    const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
+    const redirectUri = process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URI || "https://hebertpaes.com/auth/github/callback";
+
+    if (!clientId) return "";
+
+    const params = new URLSearchParams({
+      client_id: clientId,
+      scope: "read:user user:email",
+      redirect_uri: redirectUri,
+    });
+
+    return `https://github.com/login/oauth/authorize?${params.toString()}`;
   }, []);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -106,11 +117,17 @@ export default function LoginPage() {
         <p className="text-slate-300 mb-6">Acesso da área OpenClaw em hebertpaes.com.</p>
 
         <a
-          href={githubUrl}
-          className="w-full inline-flex items-center justify-center bg-black hover:bg-neutral-900 border border-neutral-700 text-white font-semibold rounded-lg px-4 py-3 mb-4"
+          href={githubUrl || "#"}
+          className="w-full inline-flex items-center justify-center bg-black hover:bg-neutral-900 border border-neutral-700 text-white font-semibold rounded-lg px-4 py-3 mb-2"
         >
           Continuar com GitHub
         </a>
+
+        {!githubUrl && (
+          <p className="text-xs text-amber-200 mb-4">
+            Configure <code>NEXT_PUBLIC_GITHUB_CLIENT_ID</code> e <code>NEXT_PUBLIC_GITHUB_REDIRECT_URI</code> para ativar o login GitHub real.
+          </p>
+        )}
 
         <div className="grid sm:grid-cols-2 gap-2 mb-6">
           {socialProviders.map((provider) => (

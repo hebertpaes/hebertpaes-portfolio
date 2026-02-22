@@ -101,7 +101,7 @@ export async function GET(req: NextRequest) {
   const clientSecret = process.env[config.clientSecretEnv];
 
   if (!clientId || !clientSecret) {
-    return NextResponse.redirect(new URL(`/login?error=${provider}_not_configured`, req.url));
+    return NextResponse.redirect(`${getBaseUrl(req)}/login?error=${provider}_not_configured`);
   }
 
   const callbackUrl = callbackForProvider(req, provider);

@@ -73,8 +73,14 @@ export async function GET(req: NextRequest) {
 
   upstream.addEventListener("open", () => {
     // Send auth token immediately after open (gateway-side handling required)
+    // For session-cookie auth, use server-side proxy token to authenticate upstream.
+    const upstreamToken =
+      tokenResult.token === "session-cookie"
+        ? process.env.OPENCLAW_PROXY_TOKEN || ""
+        : tokenResult.token || "";
+
     try {
-      upstream?.send(JSON.stringify({ type: "auth", token: tokenResult.token }));
+      upstream?.send(JSON.stringify({ type: "auth", token: upstreamToken }));
     } catch {
       closeBoth(1011, "Auth handshake failed");
     }

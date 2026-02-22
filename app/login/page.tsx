@@ -3,12 +3,12 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 
 const socialProviders = [
-  { key: "google", icon: "🟢", name: "Google (Gmail)", className: "bg-white text-slate-900 hover:bg-slate-100 border border-slate-300" },
-  { key: "apple", icon: "", name: "Apple", className: "bg-black text-white hover:bg-neutral-900 border border-neutral-700" },
-  { key: "microsoft", icon: "🪟", name: "Microsoft", className: "bg-sky-500 text-white hover:bg-sky-400 border border-sky-300/40" },
-  { key: "github", icon: "🐙", name: "GitHub", className: "bg-zinc-900 text-white hover:bg-zinc-800 border border-zinc-700" },
-  { key: "linkedin", icon: "💼", name: "LinkedIn", className: "bg-blue-700 text-white hover:bg-blue-600 border border-blue-400/40" },
-  { key: "whatsapp", icon: "💬", name: "WhatsApp", className: "bg-emerald-500 text-white hover:bg-emerald-400 border border-emerald-300/40" },
+  { key: "google", icon: "/icons/google.svg", name: "Google (Gmail)", className: "bg-white text-slate-900 hover:bg-slate-100 border border-slate-300" },
+  { key: "apple", icon: "/icons/apple.svg", name: "Apple", className: "bg-black text-white hover:bg-neutral-900 border border-neutral-700" },
+  { key: "microsoft", icon: "/icons/microsoft.svg", name: "Microsoft", className: "bg-sky-500 text-white hover:bg-sky-400 border border-sky-300/40" },
+  { key: "github", icon: "/icons/github.svg", name: "GitHub", className: "bg-zinc-900 text-white hover:bg-zinc-800 border border-zinc-700" },
+  { key: "linkedin", icon: "/icons/linkedin.svg", name: "LinkedIn", className: "bg-blue-700 text-white hover:bg-blue-600 border border-blue-400/40" },
+  { key: "whatsapp", icon: "/icons/whatsapp.svg", name: "WhatsApp", className: "bg-emerald-500 text-white hover:bg-emerald-400 border border-emerald-300/40" },
 ];
 
 export default function LoginPage() {
@@ -104,7 +104,7 @@ export default function LoginPage() {
               href={`/api/openclaw/auth?provider=${provider.key}&action=start`}
               className={`inline-flex items-center justify-center font-semibold rounded-lg px-4 py-3 text-sm ${provider.className}`}
             >
-              <span className="mr-2">{provider.icon}</span> Cadastrar com {provider.name}
+              <img src={provider.icon} alt="" className="w-4 h-4 mr-2" aria-hidden="true" /> Cadastrar com {provider.name}
             </a>
           ))}
         </div>

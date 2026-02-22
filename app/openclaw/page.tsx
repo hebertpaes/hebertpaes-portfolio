@@ -62,6 +62,12 @@ export default function OpenClawPage() {
 
         <section className="flex flex-wrap gap-3">
           <a
+            href="/openclaw/chat"
+            className="bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold px-5 py-3 rounded-xl transition-all"
+          >
+            Abrir Chat
+          </a>
+          <a
             href="https://docs.openclaw.ai"
             target="_blank"
             rel="noopener noreferrer"

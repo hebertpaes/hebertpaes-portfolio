@@ -85,7 +85,7 @@ export default function OpenClawPage() {
           >
             Open-source no GitHub
           </a>
-          <a href="mailto:contact@hebertpaes.com" className="border border-white/30 hover:bg-white/10 px-5 py-3 rounded-xl font-semibold transition-all">
+          <a href="mailto:contato@hebertpaes.com" className="border border-white/30 hover:bg-white/10 px-5 py-3 rounded-xl font-semibold transition-all">
             Falar com Hebert
           </a>
         </section>

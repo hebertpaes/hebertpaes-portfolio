@@ -150,8 +150,8 @@ export default function Home() {
         <div className="max-w-4xl mx-auto text-center bg-white/10 border border-white/10 rounded-2xl p-10">
           <h2 className="text-3xl font-bold mb-4">Contato & Parcerias</h2>
           <p className="text-gray-300 mb-6">Para shows, publis e projetos digitais, fale com a equipe.</p>
-          <a href="mailto:contact@hebertpaes.com" className="text-blue-300 text-xl hover:text-blue-200">
-            contact@hebertpaes.com
+          <a href="mailto:contato@hebertpaes.com" className="text-blue-300 text-xl hover:text-blue-200">
+            contato@hebertpaes.com
           </a>
         </div>
       </section>

@@ -1,3 +1,7 @@
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { sessionCookieName, verifySessionToken } from "@/lib/session";
+
 const agents = [
   {
     name: "Codex Agent",
@@ -22,7 +26,15 @@ const agents = [
   },
 ];
 
-export default function OpenClawAgentsPage() {
+export default async function OpenClawAgentsPage() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(sessionCookieName)?.value;
+  const session = verifySessionToken(token);
+
+  if (!session) {
+    redirect("/login?error=auth_required");
+  }
+
   return (
     <main className="min-h-screen bg-slate-950 text-white px-4 py-16">
       <div className="max-w-6xl mx-auto">
@@ -30,12 +42,10 @@ export default function OpenClawAgentsPage() {
           <div>
             <p className="uppercase tracking-[0.25em] text-cyan-300 text-xs mb-3">hebertpaes.com/openclaw/agents</p>
             <h1 className="text-4xl md:text-5xl font-black mb-3">Agents Hub</h1>
-            <p className="text-slate-300 max-w-3xl">
-              Preparação finalizada: painel estruturado para visualizar agentes, status, modelo e capacidades.
-            </p>
+            <p className="text-slate-300 max-w-3xl">Olá, <strong>{session.login}</strong>. Painel autenticado com sessão segura.</p>
           </div>
           <a href="/login" className="bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold px-5 py-3 rounded-xl">
-            Login do usuário
+            Trocar usuário
           </a>
         </div>
 
@@ -57,16 +67,6 @@ export default function OpenClawAgentsPage() {
               </div>
             </article>
           ))}
-        </section>
-
-        <section className="bg-white/5 border border-white/10 rounded-2xl p-6">
-          <h3 className="text-2xl font-bold mb-3">Próximos passos técnicos</h3>
-          <ul className="space-y-2 text-slate-200">
-            <li>• Conectar autenticação GitHub real no backend (/api/auth/callback).</li>
-            <li>• Persistir usuários/sessões no Azure SQL (openclaw-db).</li>
-            <li>• Aplicar proteção de rota por sessão autenticada.</li>
-            <li>• Integrar ações do painel com o runtime do OpenClaw.</li>
-          </ul>
         </section>
       </div>
     </main>

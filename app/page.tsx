@@ -120,8 +120,11 @@ export default function Home() {
       <section id="musicas" className="px-4 py-16">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl font-bold mb-4">Músicas de Hebert Paes Falcao</h2>
-          <p className="text-gray-300 mb-8">
+          <p className="text-gray-300 mb-3">
             Acesse as faixas nas plataformas abaixo. Os links abrem diretamente a busca do artista em cada serviço.
+          </p>
+          <p className="text-blue-200/90 mb-8 text-sm md:text-base">
+            Todas as músicas exibidas neste site são do autor, compositor e produtor <strong>Hebert Paes Falcao</strong>.
           </p>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">

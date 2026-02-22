@@ -1,9 +1,73 @@
+const agents = [
+  {
+    name: "Codex Agent",
+    role: "Desenvolvimento e execução técnica",
+    status: "Ativo",
+    model: "gpt-5.3-codex",
+    capabilities: ["Code", "Build", "Deploy", "Diagnóstico"],
+  },
+  {
+    name: "Main Agent",
+    role: "Coordenação geral e respostas",
+    status: "Ativo",
+    model: "claude-opus-4-6",
+    capabilities: ["Planejamento", "Atendimento", "Memória"],
+  },
+  {
+    name: "Gemini Agent",
+    role: "Pesquisa e análise ampliada",
+    status: "Ativo",
+    model: "gemini-3-pro-preview",
+    capabilities: ["Pesquisa", "Síntese", "Comparações"],
+  },
+];
+
 export default function OpenClawAgentsPage() {
   return (
     <main className="min-h-screen bg-slate-950 text-white px-4 py-16">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-4xl font-black mb-4">Agents</h1>
-        <p className="text-slate-300">Hub de agentes em preparação para integração completa com backend OpenClaw.</p>
+      <div className="max-w-6xl mx-auto">
+        <div className="flex justify-between items-start gap-4 flex-wrap mb-8">
+          <div>
+            <p className="uppercase tracking-[0.25em] text-cyan-300 text-xs mb-3">hebertpaes.com/openclaw/agents</p>
+            <h1 className="text-4xl md:text-5xl font-black mb-3">Agents Hub</h1>
+            <p className="text-slate-300 max-w-3xl">
+              Preparação finalizada: painel estruturado para visualizar agentes, status, modelo e capacidades.
+            </p>
+          </div>
+          <a href="/login" className="bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold px-5 py-3 rounded-xl">
+            Login do usuário
+          </a>
+        </div>
+
+        <section className="grid md:grid-cols-3 gap-4 mb-10">
+          {agents.map((agent) => (
+            <article key={agent.name} className="bg-white/10 border border-white/15 rounded-2xl p-5">
+              <div className="flex items-center justify-between gap-3 mb-3">
+                <h2 className="text-xl font-bold">{agent.name}</h2>
+                <span className="text-xs px-2 py-1 rounded-full border border-emerald-300/60 text-emerald-200 bg-emerald-500/15">{agent.status}</span>
+              </div>
+              <p className="text-slate-300 text-sm mb-2">{agent.role}</p>
+              <p className="text-cyan-200 text-sm mb-4">Modelo: {agent.model}</p>
+              <div className="flex flex-wrap gap-2">
+                {agent.capabilities.map((cap) => (
+                  <span key={cap} className="text-xs bg-slate-900/80 border border-slate-700 rounded-full px-2 py-1 text-slate-200">
+                    {cap}
+                  </span>
+                ))}
+              </div>
+            </article>
+          ))}
+        </section>
+
+        <section className="bg-white/5 border border-white/10 rounded-2xl p-6">
+          <h3 className="text-2xl font-bold mb-3">Próximos passos técnicos</h3>
+          <ul className="space-y-2 text-slate-200">
+            <li>• Conectar autenticação GitHub real no backend (/api/auth/callback).</li>
+            <li>• Persistir usuários/sessões no Azure SQL (openclaw-db).</li>
+            <li>• Aplicar proteção de rota por sessão autenticada.</li>
+            <li>• Integrar ações do painel com o runtime do OpenClaw.</li>
+          </ul>
+        </section>
       </div>
     </main>
   );

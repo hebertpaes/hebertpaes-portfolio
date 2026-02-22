@@ -8,15 +8,18 @@ export type TokenValidationResult = {
 };
 
 /**
- * Validates OpenClaw proxy token from headers or query string.
- * Accepted inputs:
- * - Authorization: Bearer <token>
- * - x-openclaw-token: <token>
- * - ?token=<token>
+ * Validação para proxy OpenClaw.
+ * Aceita:
+ * - sessão autenticada via cookie openclaw_session (fluxo web/mobile)
+ * - token explícito (Bearer/header/query) para clientes técnicos
  */
 export function validateOpenClawToken(req: NextRequest): TokenValidationResult {
-  const expected = process.env.OPENCLAW_PROXY_TOKEN;
+  const hasSessionCookie = Boolean(req.cookies.get("openclaw_session")?.value);
+  if (hasSessionCookie) {
+    return { ok: true, token: "session-cookie" };
+  }
 
+  const expected = process.env.OPENCLAW_PROXY_TOKEN;
   if (!expected) {
     return {
       ok: false,
@@ -29,24 +32,10 @@ export function validateOpenClawToken(req: NextRequest): TokenValidationResult {
   const bearer = auth.toLowerCase().startsWith("bearer ") ? auth.slice(7).trim() : "";
   const headerToken = req.headers.get("x-openclaw-token")?.trim() ?? "";
   const queryToken = req.nextUrl.searchParams.get("token")?.trim() ?? "";
-
   const token = bearer || headerToken || queryToken;
 
-  if (!token) {
-    return {
-      ok: false,
-      status: 401,
-      message: "Missing token",
-    };
-  }
-
-  if (token !== expected) {
-    return {
-      ok: false,
-      status: 403,
-      message: "Invalid token",
-    };
-  }
+  if (!token) return { ok: false, status: 401, message: "Missing token" };
+  if (token !== expected) return { ok: false, status: 403, message: "Invalid token" };
 
   return { ok: true, token };
 }

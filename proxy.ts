@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const protectedPrefixes = ["/openclaw/agents", "/openclaw/app", "/openclaw/sessions", "/openclaw/automations", "/openclaw/status"];
+const protectedPrefixes = ["/openclaw/agents", "/openclaw/app", "/openclaw/sessions", "/openclaw/automations", "/openclaw/status", "/openclaw/chat"];
 
 export function proxy(req: NextRequest) {
   const { pathname, search } = req.nextUrl;

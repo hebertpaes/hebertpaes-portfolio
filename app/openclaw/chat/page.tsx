@@ -29,16 +29,15 @@ export default function OpenClawChat() {
 
   // Endpoint público do proxy/ws
   const getWebSocketUrl = () => {
-    const wsUrl = process.env.NEXT_PUBLIC_OPENCLAW_WS_URL;
-    if (!wsUrl) {
-      return "";
+    const configured = process.env.NEXT_PUBLIC_OPENCLAW_WS_URL;
+    if (configured) return configured;
+
+    if (typeof window !== "undefined") {
+      const proto = window.location.protocol === "https:" ? "wss:" : "ws:";
+      return `${proto}//${window.location.host}/api/openclaw`;
     }
 
-    const token = process.env.NEXT_PUBLIC_OPENCLAW_TOKEN;
-    if (!token) return wsUrl;
-
-    const separator = wsUrl.includes("?") ? "&" : "?";
-    return `${wsUrl}${separator}token=${encodeURIComponent(token)}`;
+    return "";
   };
 
   const scrollToBottom = () => {
@@ -269,9 +268,9 @@ export default function OpenClawChat() {
         <div className="mt-6 bg-cyan-500/10 border border-cyan-500/30 rounded-xl p-4">
           <h3 className="font-bold text-cyan-200 mb-2">Connection Setup</h3>
           <ul className="text-sm text-cyan-100/90 mt-2 space-y-1 list-disc list-inside">
-            <li>Configure <code>NEXT_PUBLIC_OPENCLAW_WS_URL</code> with public websocket endpoint</li>
-            <li>Optional: set <code>NEXT_PUBLIC_OPENCLAW_TOKEN</code> for token query auth</li>
-            <li>Session is persisted in <code>localStorage</code> across reloads</li>
+            <li>Endpoint padrão mobile/web: <code>/api/openclaw</code> (ws/wss automático)</li>
+            <li>Autenticação por sessão de login (cookie seguro)</li>
+            <li>Session de chat persistida em <code>localStorage</code> entre recargas</li>
           </ul>
         </div>
 

@@ -36,7 +36,7 @@ const streamingPlatforms = [
   },
   {
     name: "YouTube Music",
-    link: "https://music.youtube.com/search?q=hebert%20paes%20falcao",
+    link: "https://music.youtube.com/playlist?list=OLAK5uy_mDljpGt6-_TCOS9EX1nG7RvQrDTsXJX0k&si=Ys2ZA9hDhSX45ukt",
   },
   {
     name: "Deezer",
@@ -123,8 +123,11 @@ export default function Home() {
           <p className="text-gray-300 mb-3">
             Acesse as faixas nas plataformas abaixo. Os links abrem diretamente a busca do artista em cada serviço.
           </p>
-          <p className="text-blue-200/90 mb-8 text-sm md:text-base">
+          <p className="text-blue-200/90 mb-2 text-sm md:text-base">
             Todas as músicas exibidas neste site são do autor, compositor e produtor <strong>Hebert Paes Falcao</strong>.
+          </p>
+          <p className="text-cyan-200/90 mb-8 text-xs md:text-sm">
+            Playlist oficial no YouTube Music já vinculada na seção abaixo.
           </p>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">

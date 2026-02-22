@@ -1,26 +1,28 @@
-const pillars = [
+const resources = [
   {
-    title: "Assistente Proativo",
-    description:
-      "Um agente pessoal que acompanha contexto, lembra tarefas importantes e ajuda a executar o que realmente importa.",
+    title: "Agents",
+    description: "Painel de agentes, sessões e contexto operacional.",
+    href: "/openclaw/agents",
+    cta: "Abrir Agents",
   },
   {
-    title: "Automação com Contexto",
-    description:
-      "Fluxos inteligentes para rotina, projetos e monitoramento — sem perder histórico nem rastreabilidade.",
+    title: "Sessões",
+    description: "Conversas ativas, histórico e continuidade de execução.",
+    href: "/openclaw/sessions",
+    cta: "Ver sessões",
   },
   {
-    title: "Integração Real",
-    description:
-      "Conexão com webchat, ferramentas e canais para transformar conversa em ação de verdade.",
+    title: "Automações",
+    description: "Rotinas, tarefas recorrentes e checklists proativos.",
+    href: "/openclaw/automations",
+    cta: "Ver automações",
   },
-];
-
-const useCases = [
-  "Centralizar tarefas e decisões do dia a dia",
-  "Automatizar deploys, validações e checks técnicos",
-  "Criar rotinas de follow-up com memória persistente",
-  "Operar projetos com velocidade e governança",
+  {
+    title: "Status & Segurança",
+    description: "Saúde do ambiente, auditorias e diagnósticos rápidos.",
+    href: "/openclaw/status",
+    cta: "Abrir status",
+  },
 ];
 
 export default function OpenClawPage() {
@@ -29,46 +31,36 @@ export default function OpenClawPage() {
       <div className="max-w-6xl mx-auto">
         <p className="uppercase tracking-[0.3em] text-cyan-300 text-xs md:text-sm mb-4">hebertpaes.com/openclaw</p>
 
-        <h1 className="text-4xl md:text-6xl font-black leading-tight mb-6">
-          OpenClaw por Hebert Paes
-          <span className="block text-cyan-300 mt-2">Automação pessoal + IA operacional</span>
-        </h1>
-
-        <p className="text-base md:text-xl text-slate-300 max-w-4xl mb-3">
-          Esta página reúne como estou usando OpenClaw para acelerar execução, organizar contexto e transformar pedidos em entregas reais com velocidade.
-        </p>
-        <p className="text-xs md:text-sm text-amber-200/90 mb-10">
-          O botão de chat local funciona no MacBook com OpenClaw ativo (endereço 127.0.0.1).
-        </p>
-
-        <div className="grid md:grid-cols-3 gap-4 mb-10">
-          {pillars.map((item) => (
-            <article key={item.title} className="bg-white/10 border border-white/15 rounded-2xl p-5 backdrop-blur-sm">
-              <h2 className="font-bold text-lg mb-2">{item.title}</h2>
-              <p className="text-slate-300 text-sm">{item.description}</p>
-            </article>
-          ))}
+        <div className="flex items-start justify-between gap-4 flex-wrap mb-6">
+          <h1 className="text-4xl md:text-6xl font-black leading-tight">
+            OpenClaw Hub
+            <span className="block text-cyan-300 mt-2">Recursos organizados em um só lugar</span>
+          </h1>
+          <a
+            href="/login"
+            className="bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold px-5 py-3 rounded-xl transition-all"
+          >
+            Login do usuário
+          </a>
         </div>
 
-        <section className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8 mb-10">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">Aplicações práticas</h2>
-          <ul className="grid md:grid-cols-2 gap-3 text-slate-200">
-            {useCases.map((item) => (
-              <li key={item} className="flex items-start gap-2">
-                <span className="text-cyan-300 mt-0.5">•</span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
+        <p className="text-base md:text-xl text-slate-300 max-w-4xl mb-10">
+          Central de operação com acesso a agentes, sessões, automações e status da plataforma.
+        </p>
+
+        <section className="grid md:grid-cols-2 gap-4 mb-10">
+          {resources.map((item) => (
+            <article key={item.title} className="bg-white/10 border border-white/15 rounded-2xl p-5 backdrop-blur-sm">
+              <h2 className="font-bold text-xl mb-2">{item.title}</h2>
+              <p className="text-slate-300 text-sm mb-4">{item.description}</p>
+              <a href={item.href} className="inline-block border border-cyan-300 text-cyan-200 hover:bg-cyan-500/10 font-semibold px-4 py-2 rounded-lg transition-all">
+                {item.cta}
+              </a>
+            </article>
+          ))}
         </section>
 
         <section className="flex flex-wrap gap-3">
-          <a
-            href="http://127.0.0.1:18789/chat?session=agent%3Acodex%3Acodex"
-            className="bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold px-5 py-3 rounded-xl transition-all"
-          >
-            Abrir chat do agente (MacBook)
-          </a>
           <a
             href="https://docs.openclaw.ai"
             target="_blank"

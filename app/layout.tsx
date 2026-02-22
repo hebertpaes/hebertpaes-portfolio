@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Hebert Paes | OpenClaw Hub",
   description: "Portal OpenClaw com login, agentes e automações.",
+  manifest: "/manifest.webmanifest",
   icons: {
     icon: "/openclaw-icon.svg",
     shortcut: "/openclaw-icon.svg",

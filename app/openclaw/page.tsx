@@ -48,6 +48,12 @@ export default function OpenClawPage() {
           Central de operação com acesso a agentes, sessões, automações e status da plataforma.
         </p>
 
+        <div className="mb-6">
+          <a href="/openclaw/app" className="inline-block bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold px-5 py-3 rounded-xl">
+            Abrir app (protótipo)
+          </a>
+        </div>
+
         <section className="grid md:grid-cols-2 gap-4 mb-10">
           {resources.map((item) => (
             <article key={item.title} className="bg-white/10 border border-white/15 rounded-2xl p-5 backdrop-blur-sm">

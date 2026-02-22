@@ -97,7 +97,10 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const callbackUrl = `${getBaseUrl(req)}/api/openclaw/auth?provider=${provider}&action=callback`;
+  const callbackUrl =
+    provider === "github"
+      ? process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URI || `${getBaseUrl(req)}/auth/github/callback`
+      : `${getBaseUrl(req)}/api/openclaw/auth?provider=${provider}&action=callback`;
 
   if (action === "start") {
     const state = crypto.randomUUID();

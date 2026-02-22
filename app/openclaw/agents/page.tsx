@@ -44,9 +44,14 @@ export default async function OpenClawAgentsPage() {
             <h1 className="text-4xl md:text-5xl font-black mb-3">Agents Hub</h1>
             <p className="text-slate-300 max-w-3xl">Olá, <strong>{session.login}</strong>. Painel autenticado com sessão segura.</p>
           </div>
-          <a href="/login" className="bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold px-5 py-3 rounded-xl">
-            Trocar usuário
-          </a>
+          <div className="flex gap-2">
+            <a href="/login" className="bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold px-5 py-3 rounded-xl">
+              Trocar usuário
+            </a>
+            <a href="/api/auth/logout" className="bg-rose-400 hover:bg-rose-300 text-slate-950 font-bold px-5 py-3 rounded-xl">
+              Sair
+            </a>
+          </div>
         </div>
 
         <section className="grid md:grid-cols-3 gap-4 mb-10">

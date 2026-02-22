@@ -78,6 +78,9 @@ export default function Home() {
             <a href="#musicas" className="border border-blue-400 hover:bg-blue-500/20 px-8 py-3 rounded-lg font-semibold transition-all">
               Ouvir Músicas
             </a>
+            <a href="/openclaw" className="border border-cyan-300 text-cyan-200 hover:bg-cyan-500/20 px-8 py-3 rounded-lg font-semibold transition-all">
+              OpenClaw
+            </a>
           </div>
         </div>
       </section>

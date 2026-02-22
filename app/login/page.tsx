@@ -4,11 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 
 const socialProviders = [
   { key: "google", icon: "/icons/google.svg", name: "Google (Gmail)", className: "bg-white text-slate-900 hover:bg-slate-100 border border-slate-300" },
-  { key: "apple", icon: "/icons/apple.svg", name: "Apple", className: "bg-black text-white hover:bg-neutral-900 border border-neutral-700" },
-  { key: "microsoft", icon: "/icons/microsoft.svg", name: "Microsoft", className: "bg-sky-500 text-white hover:bg-sky-400 border border-sky-300/40" },
-  { key: "github", icon: "/icons/github.svg", name: "GitHub", className: "bg-zinc-900 text-white hover:bg-zinc-800 border border-zinc-700" },
-  { key: "linkedin", icon: "/icons/linkedin.svg", name: "LinkedIn", className: "bg-blue-700 text-white hover:bg-blue-600 border border-blue-400/40" },
-  { key: "whatsapp", icon: "/icons/whatsapp.svg", name: "WhatsApp", className: "bg-emerald-500 text-white hover:bg-emerald-400 border border-emerald-300/40" },
 ];
 
 export default function LoginPage() {
@@ -36,10 +31,12 @@ export default function LoginPage() {
           className="w-full inline-flex items-center justify-center bg-black hover:bg-neutral-900 border border-neutral-700 text-white font-semibold rounded-xl px-4 py-3.5 mb-4 shadow-sm hover:shadow-md active:scale-[0.99] transition-all"
         >
           <img src="/icons/github.svg" alt="" className="w-5 h-5 mr-2.5" aria-hidden="true" />
-          Continuar com GitHub
+          Entrar (usuários existentes)
         </a>
 
-        <div className="grid sm:grid-cols-2 gap-3 mb-2">
+        <p className="text-xs text-slate-300 mb-3">Novos usuários: cadastro exclusivamente via Google API.</p>
+
+        <div className="grid sm:grid-cols-1 gap-3 mb-2">
           {socialProviders.map((provider) => (
             <a
               key={provider.name}

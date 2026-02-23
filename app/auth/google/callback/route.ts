@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
-  const url = new URL("/api/openclaw/auth", req.url);
+  const base = process.env.NEXT_PUBLIC_APP_URL || req.nextUrl.origin;
+  const url = new URL("/api/openclaw/auth", base);
   url.searchParams.set("provider", "google");
   url.searchParams.set("action", "callback");
 

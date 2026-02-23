@@ -23,6 +23,8 @@ export default function OpenClawChat() {
   const [isListening, setIsListening] = useState(false);
   const [selectedVoice, setSelectedVoice] = useState("");
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [assistantReady, setAssistantReady] = useState(false);
+  const [introduced, setIntroduced] = useState(false);
 
   const wsRef = useRef<WebSocket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -93,9 +95,14 @@ export default function OpenClawChat() {
       const list = window.speechSynthesis.getVoices();
       setVoices(list);
       if (!selectedVoice && list.length) {
+        const malePt = list.find((v) => {
+          const name = v.name.toLowerCase();
+          return v.lang.toLowerCase().startsWith("pt") && (name.includes("male") || name.includes("homem") || name.includes("mascul"));
+        });
         const pt = list.find((v) => v.lang.toLowerCase().startsWith("pt"));
-        setSelectedVoice((pt || list[0]).name);
+        setSelectedVoice((malePt || pt || list[0]).name);
       }
+      if (list.length) setAssistantReady(true);
     };
 
     loadVoices();
@@ -115,6 +122,24 @@ export default function OpenClawChat() {
       { role: "system", content: `Session reset: ${fresh}` },
     ]);
   };
+
+  useEffect(() => {
+    if (!assistantReady || introduced || !window.speechSynthesis) return;
+
+    const introText = "Olá, eu sou Jabes. Seu assistente de voz está pronto.";
+    const utterance = new SpeechSynthesisUtterance(introText);
+    utterance.lang = "pt-BR";
+    utterance.rate = 0.9;
+    utterance.pitch = 0.7;
+
+    const picked = voices.find((v) => v.name === selectedVoice);
+    if (picked) utterance.voice = picked;
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+    setIntroduced(true);
+    setMessages((prev) => [...prev, { role: "system", content: "Jabes pronto para comandos de voz." }]);
+  }, [assistantReady, introduced, selectedVoice, voices]);
 
   const connect = () => {
     if (wsRef.current?.readyState === WebSocket.OPEN) return;
@@ -222,7 +247,16 @@ export default function OpenClawChat() {
       if (!transcript) return;
 
       const normalized = String(transcript).trim().toLowerCase();
-      if (normalized === "enviar mensagem" || normalized === "enviar") {
+      const hasWakeWord = normalized.includes("jabes");
+
+      if (!hasWakeWord) {
+        setMessages((prev) => [...prev, { role: "system", content: "Diga 'Jabes' antes do comando." }]);
+        return;
+      }
+
+      const command = normalized.replace("jabes", "").trim();
+
+      if (command === "enviar mensagem" || command === "enviar") {
         if (connected && input.trim()) {
           const message = { type: "message", content: input, session: sessionId || DEFAULT_SESSION };
           wsRef.current?.send(JSON.stringify(message));
@@ -232,12 +266,14 @@ export default function OpenClawChat() {
         return;
       }
 
-      if (normalized.startsWith("dizer ")) {
-        setInput(transcript.replace(/^dizer\s+/i, ""));
+      if (command.startsWith("dizer ")) {
+        setInput(command.replace(/^dizer\s+/i, ""));
         return;
       }
 
-      setInput(transcript);
+      if (command) {
+        setInput(command);
+      }
     };
 
     recognition.start();
@@ -381,7 +417,8 @@ export default function OpenClawChat() {
             <li>Endpoint padrão mobile/web: <code>/api/openclaw</code> (ws/wss automático)</li>
             <li>Autenticação por sessão de login (cookie seguro)</li>
             <li>Session de chat persistida em <code>localStorage</code> entre recargas</li>
-            <li>Comandos de voz: diga <code>dizer ...</code> para preencher texto e <code>enviar mensagem</code> para enviar</li>
+            <li>Comandos de voz com wake word: diga <code>Jabes dizer ...</code> para preencher texto</li>
+            <li>Para envio por voz: diga <code>Jabes enviar mensagem</code></li>
           </ul>
         </div>
 

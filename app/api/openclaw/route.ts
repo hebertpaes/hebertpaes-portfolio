@@ -75,7 +75,7 @@ export async function GET(req: NextRequest) {
     // Send auth token immediately after open (gateway-side handling required)
     // For session-cookie auth, use server-side proxy token to authenticate upstream.
     const upstreamToken =
-      tokenResult.token === "session-cookie"
+      tokenResult.token === "session-cookie" || tokenResult.token === "public"
         ? process.env.OPENCLAW_PROXY_TOKEN || ""
         : tokenResult.token || "";
 

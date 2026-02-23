@@ -19,6 +19,11 @@ export function validateOpenClawToken(req: NextRequest): TokenValidationResult {
     return { ok: true, token: "session-cookie" };
   }
 
+  const publicChatEnabled = process.env.OPENCLAW_PUBLIC_CHAT === "true";
+  if (publicChatEnabled) {
+    return { ok: true, token: "public" };
+  }
+
   const expected = process.env.OPENCLAW_PROXY_TOKEN;
   if (!expected) {
     return {

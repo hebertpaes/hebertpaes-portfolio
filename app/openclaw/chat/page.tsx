@@ -412,13 +412,12 @@ export default function OpenClawChat() {
         </div>
 
         <div className="mt-6 bg-cyan-500/10 border border-cyan-500/30 rounded-xl p-4">
-          <h3 className="font-bold text-cyan-200 mb-2">Connection Setup</h3>
+          <h3 className="font-bold text-cyan-200 mb-2">Ajuda rápida</h3>
           <ul className="text-sm text-cyan-100/90 mt-2 space-y-1 list-disc list-inside">
-            <li>Endpoint padrão mobile/web: <code>/api/openclaw</code> (ws/wss automático)</li>
-            <li>Autenticação por sessão de login (cookie seguro)</li>
-            <li>Session de chat persistida em <code>localStorage</code> entre recargas</li>
-            <li>Comandos de voz com wake word: diga <code>Jabes dizer ...</code> para preencher texto</li>
-            <li>Para envio por voz: diga <code>Jabes enviar mensagem</code></li>
+            <li>Se ficar desconectado, confira as variáveis: <code>OPENCLAW_PROXY_TOKEN</code> e <code>OPENCLAW_PUBLIC_CHAT=true</code></li>
+            <li>Sessão de chat fica salva no navegador (localStorage)</li>
+            <li>Voz: diga <code>Jabes dizer ...</code> para preencher texto</li>
+            <li>Envio por voz: diga <code>Jabes enviar mensagem</code></li>
           </ul>
         </div>
 

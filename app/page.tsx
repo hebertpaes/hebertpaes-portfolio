@@ -25,6 +25,9 @@ const products = [
   },
 ];
 
+const floatingBtnClass =
+  "inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-200 hover:-translate-y-0.5 shadow-[0_8px_30px_rgba(0,0,0,0.35)] border border-white/20 backdrop-blur-sm";
+
 const streamingPlatforms = [
   {
     name: "Spotify",
@@ -72,16 +75,16 @@ export default function Home() {
             às músicas de Hebert Paes nos principais serviços de streaming.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
-            <a href="#loja" className="bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-lg font-semibold transition-all">
+            <a href="#loja" className={`${floatingBtnClass} bg-blue-600 hover:bg-blue-700 px-8 py-3`}>
               Entrar na Loja
             </a>
-            <a href="#musicas" className="border border-blue-400 hover:bg-blue-500/20 px-8 py-3 rounded-lg font-semibold transition-all">
+            <a href="#musicas" className={`${floatingBtnClass} bg-blue-500/15 text-blue-100 hover:bg-blue-500/25 px-8 py-3`}>
               Ouvir Músicas
             </a>
-            <a href="/podcast" className="border border-violet-300 text-violet-200 hover:bg-violet-500/20 px-8 py-3 rounded-lg font-semibold transition-all">
+            <a href="/podcast" className={`${floatingBtnClass} bg-violet-500/15 text-violet-100 hover:bg-violet-500/25 px-8 py-3`}>
               Podcast
             </a>
-            <a href="/openclaw" className="border border-cyan-300 text-cyan-200 hover:bg-cyan-500/20 px-8 py-3 rounded-lg font-semibold transition-all">
+            <a href="/openclaw" className={`${floatingBtnClass} bg-cyan-500/15 text-cyan-100 hover:bg-cyan-500/25 px-8 py-3`}>
               OpenClaw
             </a>
           </div>
@@ -95,7 +98,7 @@ export default function Home() {
               <h2 className="text-4xl font-bold">Loja Virtual</h2>
               <p className="text-gray-300 mt-2">Produtos oficiais com visual premium e foco em conversão.</p>
             </div>
-            <button className="bg-emerald-500 hover:bg-emerald-600 text-gray-900 font-bold px-6 py-3 rounded-lg transition-all">
+            <button className={`${floatingBtnClass} bg-emerald-500 hover:bg-emerald-600 text-gray-900 font-bold px-6 py-3`}>
               Finalizar compra
             </button>
           </div>
@@ -110,7 +113,7 @@ export default function Home() {
                 <p className="text-gray-300 text-sm mb-5 min-h-[3rem]">{product.description}</p>
                 <div className="flex items-center justify-between">
                   <strong className="text-2xl text-emerald-300">{product.price}</strong>
-                  <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-semibold">
+                  <button className={`${floatingBtnClass} bg-blue-600 hover:bg-blue-700 px-4 py-2 text-sm`}>
                     Adicionar
                   </button>
                 </div>
@@ -140,11 +143,34 @@ export default function Home() {
                 href={platform.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl px-5 py-4 font-semibold transition-all"
+                className={`${floatingBtnClass} bg-white/10 hover:bg-white/20 px-5 py-4`}
               >
                 Ouvir no {platform.name}
               </a>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="chat" className="px-4 py-16">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+            <div>
+              <h2 className="text-4xl font-bold">Chat Jabes (Principal)</h2>
+              <p className="text-gray-300 mt-2">Atendimento direto na página principal.</p>
+            </div>
+            <a href="/openclaw/chat" className={`${floatingBtnClass} bg-cyan-600 hover:bg-cyan-700 px-6 py-3`}>
+              Abrir em tela cheia
+            </a>
+          </div>
+
+          <div className="rounded-2xl overflow-hidden border border-white/15 shadow-[0_20px_60px_rgba(0,0,0,0.45)] bg-black/20">
+            <iframe
+              src="/openclaw/chat"
+              title="Chat Jabes"
+              className="w-full h-[760px] bg-slate-950"
+              loading="lazy"
+            />
           </div>
         </div>
       </section>

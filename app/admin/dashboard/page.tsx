@@ -10,8 +10,15 @@ type Episode = {
   link: string;
 };
 
+type Overview = {
+  auth: { google: boolean; github: boolean };
+  infra: { sql: boolean; openclawProxy: boolean; upstreamWs: string | null };
+  updatedAt: string;
+};
+
 export default function AdminDashboard() {
   const [episodes, setEpisodes] = useState<Episode[]>([]);
+  const [overview, setOverview] = useState<Overview | null>(null);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState('');
 
@@ -20,6 +27,11 @@ export default function AdminDashboard() {
       .then((r) => r.json())
       .then((d) => setEpisodes(d.episodes || []))
       .catch(() => setEpisodes([]));
+
+    fetch('/api/admin/overview')
+      .then((r) => r.json())
+      .then((d) => setOverview(d))
+      .catch(() => setOverview(null));
   }, []);
 
   const handleLogout = () => {
@@ -76,6 +88,24 @@ export default function AdminDashboard() {
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0 space-y-6">
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
+              <p className="text-gray-400 text-xs mb-1">OAuth</p>
+              <p className="text-white font-semibold">Google: {overview?.auth?.google ? 'ativo' : 'pendente'}</p>
+              <p className="text-white font-semibold">GitHub: {overview?.auth?.github ? 'ativo' : 'pendente'}</p>
+            </div>
+            <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
+              <p className="text-gray-400 text-xs mb-1">Infra</p>
+              <p className="text-white font-semibold">SQL: {overview?.infra?.sql ? 'conectado' : 'pendente'}</p>
+              <p className="text-white font-semibold">OpenClaw Proxy: {overview?.infra?.openclawProxy ? 'ativo' : 'pendente'}</p>
+            </div>
+            <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
+              <p className="text-gray-400 text-xs mb-1">Atualização</p>
+              <p className="text-white font-semibold">{overview?.updatedAt ? new Date(overview.updatedAt).toLocaleString('pt-BR') : '—'}</p>
+              <a href="/openclaw/status" className="text-cyan-300 text-sm underline">Ver status completo</a>
+            </div>
+          </div>
+
           <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
             <h3 className="text-lg font-medium text-white mb-4">Editor de Podcast</h3>
             <p className="text-gray-400 mb-4">Edite títulos, descrições e links diretamente daqui.</p>

@@ -3,13 +3,24 @@ import { createSessionToken, sessionCookieName } from "@/lib/session";
 
 export const runtime = "nodejs";
 
+function baseUrl(req: NextRequest) {
+  return process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL || req.nextUrl.origin;
+}
+
+function sanitizeNext(next?: string | null) {
+  if (!next) return "/openclaw/agents";
+  if (!next.startsWith("/")) return "/openclaw/agents";
+  if (next.startsWith("//")) return "/openclaw/agents";
+  return next;
+}
+
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get("code");
   const state = req.nextUrl.searchParams.get("state");
   const stateCookie = req.cookies.get("openclaw_oauth_state_github")?.value;
 
   if (!code || !state || !stateCookie || state !== stateCookie) {
-    return NextResponse.redirect(new URL("/login?error=oauth_state", req.url));
+    return NextResponse.redirect(new URL("/login?error=oauth_state", baseUrl(req)));
   }
 
   const clientId = process.env.GITHUB_CLIENT_ID;
@@ -17,7 +28,7 @@ export async function GET(req: NextRequest) {
   const redirectUri = process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URI || "https://hebertpaes.com/auth/github/callback";
 
   if (!clientId || !clientSecret) {
-    return NextResponse.redirect(new URL("/login?error=oauth_not_configured", req.url));
+    return NextResponse.redirect(new URL("/login?error=oauth_not_configured", baseUrl(req)));
   }
 
   try {
@@ -39,7 +50,7 @@ export async function GET(req: NextRequest) {
     const accessToken = tokenJson?.access_token as string | undefined;
 
     if (!accessToken) {
-      return NextResponse.redirect(new URL("/login?error=oauth_token", req.url));
+      return NextResponse.redirect(new URL("/login?error=oauth_token", baseUrl(req)));
     }
 
     const [userResp, emailsResp] = await Promise.all([
@@ -74,7 +85,7 @@ export async function GET(req: NextRequest) {
       provider: "github",
     });
 
-    const res = NextResponse.redirect(new URL("/openclaw/agents", req.url));
+    const res = NextResponse.redirect(new URL(sanitizeNext(req.cookies.get("openclaw_oauth_next")?.value), baseUrl(req)));
     res.cookies.set(sessionCookieName, sessionToken, {
       httpOnly: true,
       secure: true,
@@ -90,9 +101,16 @@ export async function GET(req: NextRequest) {
       path: "/",
       maxAge: 0,
     });
+    res.cookies.set("openclaw_oauth_next", "", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 0,
+    });
 
     return res;
   } catch {
-    return NextResponse.redirect(new URL("/login?error=oauth_exchange", req.url));
+    return NextResponse.redirect(new URL("/login?error=oauth_exchange", baseUrl(req)));
   }
 }

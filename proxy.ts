@@ -17,5 +17,5 @@ export function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/openclaw/:path*"],
+  matcher: ["/openclaw/:path*", "/admin/:path*"],
 };

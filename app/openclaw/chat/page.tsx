@@ -32,17 +32,19 @@ export default function OpenClawChat() {
   const connected = connectionStatus === "connected";
   const connecting = connectionStatus === "connecting";
 
-  // Endpoint público do proxy/ws
-  const getWebSocketUrl = () => {
+  // Endpoints candidatos do proxy/ws (com fallback)
+  const getWebSocketCandidates = () => {
+    const list: string[] = [];
     const configured = process.env.NEXT_PUBLIC_OPENCLAW_WS_URL;
-    if (configured) return configured;
+    if (configured) list.push(configured);
 
     if (typeof window !== "undefined") {
       const proto = window.location.protocol === "https:" ? "wss:" : "ws:";
-      return `${proto}//${window.location.host}/api/openclaw`;
+      list.push(`${proto}//${window.location.host}/api/openclaw`);
+      list.push(`${proto}//${window.location.host}/openclaw/ws`);
     }
 
-    return "";
+    return [...new Set(list.filter(Boolean))];
   };
 
   const scrollToBottom = () => {
@@ -144,64 +146,70 @@ export default function OpenClawChat() {
   const connect = () => {
     if (wsRef.current?.readyState === WebSocket.OPEN) return;
 
-    const target = getWebSocketUrl();
-    if (!target) {
+    const candidates = getWebSocketCandidates();
+    if (!candidates.length) {
       setConnectionStatus("error");
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "system",
-          content:
-            "NEXT_PUBLIC_OPENCLAW_WS_URL não está configurada. Defina o endpoint público para conectar.",
-        },
-      ]);
+      setMessages((prev) => [...prev, { role: "system", content: "Nenhum endpoint WS disponível para conexão." }]);
       return;
     }
 
     setConnectionStatus("connecting");
 
-    const ws = new WebSocket(target);
-
-    ws.onopen = () => {
-      setConnectionStatus("connected");
-      setMessages((prev) => [
-        ...prev,
-        { role: "system", content: `Connected to OpenClaw Gateway (${sessionId})` },
-      ]);
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
+    let idx = 0;
+    let connectedOnce = false;
+    const tryConnect = () => {
+      const target = candidates[idx];
+      if (!target) {
+        setConnectionStatus("error");
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", content: data.message || JSON.stringify(data) },
+          { role: "system", content: "Connection error. Check public WS endpoint and OpenClaw proxy availability." },
         ]);
-      } catch {
-        setMessages((prev) => [...prev, { role: "assistant", content: event.data }]);
+        return;
       }
+
+      setMessages((prev) => [...prev, { role: "system", content: `Tentando conexão: ${target}` }]);
+      const ws = new WebSocket(target);
+      wsRef.current = ws;
+
+      ws.onopen = () => {
+        connectedOnce = true;
+        setConnectionStatus("connected");
+        setMessages((prev) => [...prev, { role: "system", content: `Connected to OpenClaw Gateway (${sessionId})` }]);
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          setMessages((prev) => [...prev, { role: "assistant", content: data.message || JSON.stringify(data) }]);
+        } catch {
+          setMessages((prev) => [...prev, { role: "assistant", content: event.data }]);
+        }
+      };
+
+      ws.onerror = () => {
+        try { ws.close(); } catch {}
+      };
+
+      ws.onclose = () => {
+        if (!connectedOnce && idx < candidates.length - 1) {
+          idx += 1;
+          tryConnect();
+          return;
+        }
+
+        if (!connectedOnce) {
+          setConnectionStatus("error");
+          setMessages((prev) => [...prev, { role: "system", content: "Disconnected from OpenClaw Gateway" }]);
+          return;
+        }
+
+        setConnectionStatus("disconnected");
+        setMessages((prev) => [...prev, { role: "system", content: "Disconnected from OpenClaw Gateway" }]);
+      };
     };
 
-    ws.onerror = () => {
-      setConnectionStatus("error");
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "system",
-          content: "Connection error. Check public WS endpoint and OpenClaw proxy availability.",
-        },
-      ]);
-    };
-
-    ws.onclose = () => {
-      setConnectionStatus("disconnected");
-      setMessages((prev) => [
-        ...prev,
-        { role: "system", content: "Disconnected from OpenClaw Gateway" },
-      ]);
-    };
-
-    wsRef.current = ws;
+    tryConnect();
   };
 
   const disconnect = () => {

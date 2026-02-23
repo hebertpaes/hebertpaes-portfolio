@@ -21,6 +21,8 @@ export default function OpenClawChat() {
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>("disconnected");
   const [sessionId, setSessionId] = useState(DEFAULT_SESSION);
   const [isListening, setIsListening] = useState(false);
+  const [selectedVoice, setSelectedVoice] = useState("");
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
 
   const wsRef = useRef<WebSocket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -83,6 +85,26 @@ export default function OpenClawChat() {
     localStorage.setItem(STORAGE_KEY, fresh);
     setSessionId(fresh);
   }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.speechSynthesis) return;
+
+    const loadVoices = () => {
+      const list = window.speechSynthesis.getVoices();
+      setVoices(list);
+      if (!selectedVoice && list.length) {
+        const pt = list.find((v) => v.lang.toLowerCase().startsWith("pt"));
+        setSelectedVoice((pt || list[0]).name);
+      }
+    };
+
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+
+    return () => {
+      window.speechSynthesis.onvoiceschanged = null;
+    };
+  }, [selectedVoice]);
 
   const resetSession = () => {
     const fresh = createSessionId();
@@ -197,7 +219,25 @@ export default function OpenClawChat() {
     };
     recognition.onresult = (event: any) => {
       const transcript = event?.results?.[0]?.[0]?.transcript || "";
-      if (transcript) setInput(transcript);
+      if (!transcript) return;
+
+      const normalized = String(transcript).trim().toLowerCase();
+      if (normalized === "enviar mensagem" || normalized === "enviar") {
+        if (connected && input.trim()) {
+          const message = { type: "message", content: input, session: sessionId || DEFAULT_SESSION };
+          wsRef.current?.send(JSON.stringify(message));
+          setMessages((prev) => [...prev, { role: "user", content: input }]);
+          setInput("");
+        }
+        return;
+      }
+
+      if (normalized.startsWith("dizer ")) {
+        setInput(transcript.replace(/^dizer\s+/i, ""));
+        return;
+      }
+
+      setInput(transcript);
     };
 
     recognition.start();
@@ -212,6 +252,10 @@ export default function OpenClawChat() {
 
     const utterance = new SpeechSynthesisUtterance(lastAssistant.content);
     utterance.lang = "pt-BR";
+
+    const picked = voices.find((v) => v.name === selectedVoice);
+    if (picked) utterance.voice = picked;
+
     synth.cancel();
     synth.speak(utterance);
   };
@@ -295,6 +339,17 @@ export default function OpenClawChat() {
               disabled={!connected}
               className="flex-1 min-w-[220px] bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             />
+            <select
+              value={selectedVoice}
+              onChange={(e) => setSelectedVoice(e.target.value)}
+              className="bg-white/10 border border-white/20 rounded-lg px-3 py-3 text-sm"
+              title="Voz para leitura"
+            >
+              {voices.length === 0 && <option value="">Voz padrão</option>}
+              {voices.map((v) => (
+                <option key={v.name} value={v.name}>{v.name} ({v.lang})</option>
+              ))}
+            </select>
             <button
               type="button"
               onClick={startVoiceInput}
@@ -326,6 +381,7 @@ export default function OpenClawChat() {
             <li>Endpoint padrão mobile/web: <code>/api/openclaw</code> (ws/wss automático)</li>
             <li>Autenticação por sessão de login (cookie seguro)</li>
             <li>Session de chat persistida em <code>localStorage</code> entre recargas</li>
+            <li>Comandos de voz: diga <code>dizer ...</code> para preencher texto e <code>enviar mensagem</code> para enviar</li>
           </ul>
         </div>
 

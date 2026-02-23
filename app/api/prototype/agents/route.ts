@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { hasValidSession } from "@/lib/auth-guard";
 
 const AGENTS = [
   { id: "codex", name: "Codex Agent", model: "gpt-5.3-codex", status: "online" },
@@ -6,11 +7,13 @@ const AGENTS = [
   { id: "gemini", name: "Gemini Agent", model: "gemini-3-pro-preview", status: "online" },
 ];
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  if (!hasValidSession(req)) return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   return NextResponse.json({ ok: true, agents: AGENTS, updatedAt: new Date().toISOString() });
 }
 
 export async function POST(req: NextRequest) {
+  if (!hasValidSession(req)) return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   const body = await req.json().catch(() => ({}));
   const agentId = String(body.agentId || "");
   const prompt = String(body.prompt || "");

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSqlPool, sql } from "@/lib/sql";
+import { hasValidSession } from "@/lib/auth-guard";
 
 type Episode = {
   id: string;
@@ -93,7 +94,8 @@ async function seedIfEmpty() {
   return await readDbEpisodes();
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  if (!hasValidSession(req)) return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   try {
     const episodes = await seedIfEmpty();
     return NextResponse.json({ ok: true, episodes, source: "sql" });
@@ -103,6 +105,8 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  if (!hasValidSession(req)) return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+
   const body = await req.json().catch(() => null);
   if (!body || !Array.isArray(body.episodes)) {
     return NextResponse.json({ ok: false, error: "Payload inválido" }, { status: 400 });

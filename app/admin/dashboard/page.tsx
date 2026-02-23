@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 type Episode = {
   id: string;
@@ -12,28 +11,19 @@ type Episode = {
 };
 
 export default function AdminDashboard() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState('');
-  const router = useRouter();
 
   useEffect(() => {
-    const auth = localStorage.getItem('adminAuth');
-    if (auth === 'true') {
-      setIsAuthenticated(true);
-      fetch('/api/prototype/podcast')
-        .then((r) => r.json())
-        .then((d) => setEpisodes(d.episodes || []))
-        .catch(() => setEpisodes([]));
-    } else {
-      router.push('/admin');
-    }
-  }, [router]);
+    fetch('/api/prototype/podcast')
+      .then((r) => r.json())
+      .then((d) => setEpisodes(d.episodes || []))
+      .catch(() => setEpisodes([]));
+  }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('adminAuth');
-    router.push('/admin');
+    window.location.href = '/api/auth/logout';
   };
 
   const updateEpisode = (id: string, field: keyof Episode, value: string) => {
@@ -62,13 +52,6 @@ export default function AdminDashboard() {
     }
   };
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-        <div className="text-white">Carregando...</div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">

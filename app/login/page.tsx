@@ -7,11 +7,19 @@ const socialProviders = [
 ];
 
 export default function LoginPage() {
-  const githubUrl = useMemo(() => "/api/openclaw/auth?provider=github&action=start", []);
   const [errorText, setErrorText] = useState("");
+  const [nextPath, setNextPath] = useState("");
+
+  const githubUrl = useMemo(() => {
+    const base = "/api/openclaw/auth?provider=github&action=start";
+    return nextPath ? `${base}&next=${encodeURIComponent(nextPath)}` : base;
+  }, [nextPath]);
 
   useEffect(() => {
-    const err = new URLSearchParams(window.location.search).get("error");
+    const params = new URLSearchParams(window.location.search);
+    const err = params.get("error");
+    const next = params.get("next") || "";
+    setNextPath(next);
     if (!err) return;
     if (err === "auth_required") return setErrorText("Faça login para acessar os agentes.");
     if (err.endsWith("_not_configured")) return setErrorText("Provedor ainda não configurado. Tente outro login.");
@@ -40,7 +48,7 @@ export default function LoginPage() {
           {socialProviders.map((provider) => (
             <a
               key={provider.name}
-              href={`/api/openclaw/auth?provider=${provider.key}&action=start`}
+              href={`/api/openclaw/auth?provider=${provider.key}&action=start${nextPath ? `&next=${encodeURIComponent(nextPath)}` : ""}`}
               className={`inline-flex items-center justify-center font-semibold rounded-xl px-4 py-3.5 text-sm shadow-sm hover:shadow-md active:scale-[0.99] transition-all ${provider.className}`}
             >
               <img src={provider.icon} alt="" className="w-5 h-5 mr-2.5" aria-hidden="true" />

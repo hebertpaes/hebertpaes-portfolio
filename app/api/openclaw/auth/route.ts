@@ -81,6 +81,13 @@ function getBaseUrl(req: NextRequest) {
   return process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin;
 }
 
+function sanitizeNext(next?: string | null) {
+  if (!next) return "/openclaw/agents";
+  if (!next.startsWith("/")) return "/openclaw/agents";
+  if (next.startsWith("//")) return "/openclaw/agents";
+  return next;
+}
+
 function callbackForProvider(req: NextRequest, provider: Provider) {
   if (provider === "github") {
     return process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URI || `${getBaseUrl(req)}/auth/github/callback`;
@@ -107,6 +114,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${getBaseUrl(req)}/login?error=${provider}_not_configured`);
   }
 
+  const nextPath = sanitizeNext(req.nextUrl.searchParams.get("next"));
+
   const callbackUrl = callbackForProvider(req, provider);
 
   if (action === "start") {
@@ -119,6 +128,13 @@ export async function GET(req: NextRequest) {
     auth.searchParams.set("state", state);
 
     const res = NextResponse.redirect(auth.toString(), { status: 302 });
+    res.cookies.set("openclaw_oauth_next", nextPath, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: true,
+      path: "/",
+      maxAge: 60 * 10,
+    });
     res.cookies.set(`openclaw_oauth_state_${provider}`, state, {
       httpOnly: true,
       sameSite: "lax",
@@ -135,16 +151,16 @@ export async function GET(req: NextRequest) {
 
   // github callback is handled by /auth/github/callback
   if (provider === "github") {
-    return NextResponse.redirect(new URL(`/auth/github/callback${req.nextUrl.search}`, req.url));
+    return NextResponse.redirect(new URL(`/auth/github/callback${req.nextUrl.search}`, getBaseUrl(req)));
   }
 
   const code = req.nextUrl.searchParams.get("code");
   const state = req.nextUrl.searchParams.get("state");
   const stateCookie = req.cookies.get(`openclaw_oauth_state_${provider}`)?.value;
 
-  if (!code) return NextResponse.redirect(new URL("/login?error=oauth_code", req.url));
+  if (!code) return NextResponse.redirect(new URL("/login?error=oauth_code", getBaseUrl(req)));
   if (!state || !stateCookie || state !== stateCookie) {
-    return NextResponse.redirect(new URL("/login?error=oauth_state", req.url));
+    return NextResponse.redirect(new URL("/login?error=oauth_state", getBaseUrl(req)));
   }
 
   try {
@@ -167,7 +183,7 @@ export async function GET(req: NextRequest) {
     const idToken = tokenJson?.id_token as string | undefined;
 
     if (!accessToken && !idToken) {
-      return NextResponse.redirect(new URL(`/login?error=${provider}_token`, req.url));
+      return NextResponse.redirect(new URL(`/login?error=${provider}_token`, getBaseUrl(req)));
     }
 
     let profile: any = {};
@@ -205,7 +221,7 @@ export async function GET(req: NextRequest) {
       provider,
     });
 
-    const res = NextResponse.redirect(new URL("/openclaw/agents", req.url));
+    const res = NextResponse.redirect(new URL(req.cookies.get("openclaw_oauth_next")?.value || nextPath, getBaseUrl(req)));
     res.cookies.set(sessionCookieName, sessionToken, {
       httpOnly: true,
       secure: true,
@@ -220,8 +236,15 @@ export async function GET(req: NextRequest) {
       path: "/",
       maxAge: 0,
     });
+    res.cookies.set("openclaw_oauth_next", "", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 0,
+    });
     return res;
   } catch {
-    return NextResponse.redirect(new URL(`/login?error=${provider}_exchange`, req.url));
+    return NextResponse.redirect(new URL(`/login?error=${provider}_exchange`, getBaseUrl(req)));
   }
 }

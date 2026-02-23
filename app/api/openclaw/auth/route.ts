@@ -85,6 +85,9 @@ function callbackForProvider(req: NextRequest, provider: Provider) {
   if (provider === "github") {
     return process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URI || `${getBaseUrl(req)}/auth/github/callback`;
   }
+  if (provider === "google") {
+    return process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI || `${getBaseUrl(req)}/auth/google/callback`;
+  }
   return `${getBaseUrl(req)}${PROVIDERS[provider].callbackPath}`;
 }
 

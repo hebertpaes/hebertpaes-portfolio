@@ -20,6 +20,7 @@ export default function OpenClawChat() {
   const [input, setInput] = useState("");
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>("disconnected");
   const [sessionId, setSessionId] = useState(DEFAULT_SESSION);
+  const [isListening, setIsListening] = useState(false);
 
   const wsRef = useRef<WebSocket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -176,6 +177,45 @@ export default function OpenClawChat() {
     setInput("");
   };
 
+  const startVoiceInput = () => {
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) {
+      setMessages((prev) => [...prev, { role: "system", content: "Reconhecimento de voz não suportado neste navegador." }]);
+      return;
+    }
+
+    const recognition = new SR();
+    recognition.lang = "pt-BR";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => setIsListening(true);
+    recognition.onend = () => setIsListening(false);
+    recognition.onerror = () => {
+      setIsListening(false);
+      setMessages((prev) => [...prev, { role: "system", content: "Erro no assistente de voz." }]);
+    };
+    recognition.onresult = (event: any) => {
+      const transcript = event?.results?.[0]?.[0]?.transcript || "";
+      if (transcript) setInput(transcript);
+    };
+
+    recognition.start();
+  };
+
+  const speakLastAssistant = () => {
+    const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant");
+    if (!lastAssistant?.content) return;
+
+    const synth = window.speechSynthesis;
+    if (!synth) return;
+
+    const utterance = new SpeechSynthesisUtterance(lastAssistant.content);
+    utterance.lang = "pt-BR";
+    synth.cancel();
+    synth.speak(utterance);
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 text-white p-4">
       <div className="max-w-4xl mx-auto">
@@ -246,15 +286,30 @@ export default function OpenClawChat() {
             <div ref={messagesEndRef} />
           </div>
 
-          <form onSubmit={sendMessage} className="flex gap-2">
+          <form onSubmit={sendMessage} className="flex gap-2 flex-wrap">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={connected ? "Type your message..." : "Connect to start chatting"}
               disabled={!connected}
-              className="flex-1 bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 min-w-[220px] bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             />
+            <button
+              type="button"
+              onClick={startVoiceInput}
+              disabled={!connected || isListening}
+              className="bg-violet-600 hover:bg-violet-700 px-4 py-3 rounded-lg font-semibold transition-all disabled:opacity-50"
+            >
+              {isListening ? "Ouvindo..." : "🎤 Voz"}
+            </button>
+            <button
+              type="button"
+              onClick={speakLastAssistant}
+              className="bg-emerald-600 hover:bg-emerald-700 px-4 py-3 rounded-lg font-semibold transition-all"
+            >
+              🔊 Ouvir resposta
+            </button>
             <button
               type="submit"
               disabled={!connected || !input.trim()}

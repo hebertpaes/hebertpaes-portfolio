@@ -1,11 +1,12 @@
 import crypto from "node:crypto";
 
-type SessionData = {
+export type SessionData = {
   sub: string;
   login: string;
   name?: string;
   email?: string;
-  provider: "github" | "google" | "microsoft" | "apple" | "linkedin" | "whatsapp";
+  provider: "github" | "google" | "microsoft" | "apple" | "linkedin" | "whatsapp" | "local";
+  role?: "user" | "admin";
   iat: number;
   exp: number;
 };

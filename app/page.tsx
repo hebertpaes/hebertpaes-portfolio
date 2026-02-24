@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect } from "react";
+
 const floatingBtnClass =
   "inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-200 hover:-translate-y-0.5 shadow-[0_8px_30px_rgba(0,0,0,0.35)] border border-white/20 backdrop-blur-sm";
 
@@ -17,11 +21,33 @@ const highlights = [
 ];
 
 export default function Home() {
+  useEffect(() => {
+    const elements = document.querySelectorAll<HTMLElement>("[data-reveal]");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("reveal-visible");
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.16),transparent_40%),radial-gradient(circle_at_80%_10%,rgba(168,85,247,0.18),transparent_38%),radial-gradient(circle_at_50%_100%,rgba(59,130,246,0.16),transparent_35%)]" />
 
-      <section className="relative px-4 pt-24 pb-16 text-center">
+      <div className="pointer-events-none absolute -top-16 -left-16 h-56 w-56 rounded-full bg-cyan-400/10 blur-3xl animate-pulse" />
+      <div className="pointer-events-none absolute top-28 right-0 h-64 w-64 rounded-full bg-violet-400/10 blur-3xl animate-pulse [animation-delay:400ms]" />
+
+      <section data-reveal className="reveal relative px-4 pt-24 pb-16 text-center">
         <div className="max-w-5xl mx-auto">
           <p className="uppercase tracking-[0.35em] text-cyan-300 text-xs md:text-sm mb-5">Hebert Paes • Portfólio Oficial</p>
           <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
@@ -49,7 +75,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative px-4 py-8">
+      <section data-reveal className="reveal relative px-4 py-8">
         <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-5">
           {highlights.map((item) => (
             <article
@@ -63,7 +89,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="loja" className="relative px-4 py-16">
+      <section data-reveal id="loja" className="reveal relative px-4 py-16">
         <div className="max-w-5xl mx-auto rounded-3xl border border-amber-300/20 bg-gradient-to-r from-amber-500/10 to-orange-500/10 p-8 md:p-10 shadow-[0_20px_80px_rgba(245,158,11,0.12)]">
           <p className="uppercase tracking-[0.25em] text-amber-200 text-xs mb-3">Loja virtual</p>
           <h2 className="text-3xl md:text-4xl font-black mb-3">Loja temporariamente sem produtos</h2>
@@ -74,7 +100,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="chat" className="relative px-4 py-16">
+      <section data-reveal id="chat" className="reveal relative px-4 py-16">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
             <div>
@@ -92,7 +118,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="contact" className="relative px-4 py-16">
+      <section data-reveal id="contact" className="reveal relative px-4 py-16">
         <div className="max-w-4xl mx-auto text-center bg-white/[0.06] border border-white/10 rounded-2xl p-10 backdrop-blur-md">
           <h2 className="text-3xl font-bold mb-4">Contato & Parcerias</h2>
           <p className="text-slate-300 mb-6">Para shows, publis e projetos digitais, fale com a equipe.</p>
@@ -105,6 +131,19 @@ export default function Home() {
       <footer className="relative py-10 text-center text-slate-400 border-t border-white/10 mt-8">
         <p>© 2026 Hebert Paes. Todos os direitos reservados.</p>
       </footer>
+
+      <style jsx global>{`
+        .reveal {
+          opacity: 0;
+          transform: translateY(20px);
+          transition: opacity 700ms ease, transform 700ms ease;
+        }
+
+        .reveal-visible {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      `}</style>
     </main>
   );
 }

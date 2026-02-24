@@ -40,7 +40,6 @@ export default function OpenClawChat() {
 
     if (typeof window !== "undefined") {
       const proto = window.location.protocol === "https:" ? "wss:" : "ws:";
-      list.push(`${proto}//${window.location.host}/openclaw/ws`);
       list.push(`${proto}//${window.location.host}/api/openclaw`);
     }
 

@@ -18,14 +18,21 @@ const highlights = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 text-white">
-      <section className="px-4 pt-24 pb-16 text-center">
+    <main className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.16),transparent_40%),radial-gradient(circle_at_80%_10%,rgba(168,85,247,0.18),transparent_38%),radial-gradient(circle_at_50%_100%,rgba(59,130,246,0.16),transparent_35%)]" />
+
+      <section className="relative px-4 pt-24 pb-16 text-center">
         <div className="max-w-5xl mx-auto">
-          <p className="uppercase tracking-[0.3em] text-cyan-300 text-sm mb-4">Hebert Paes</p>
-          <h1 className="text-5xl md:text-7xl font-black mb-6">Portfólio com novo design</h1>
-          <p className="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-10">
-            Página principal redesenhada para ficar mais elegante, mais rápida de navegar e com foco em podcast,
-            atendimento e contato.
+          <p className="uppercase tracking-[0.35em] text-cyan-300 text-xs md:text-sm mb-5">Hebert Paes • Portfólio Oficial</p>
+          <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
+            Visual premium,
+            <span className="block bg-gradient-to-r from-cyan-300 via-sky-300 to-violet-300 bg-clip-text text-transparent">
+              direto ao ponto
+            </span>
+          </h1>
+          <p className="text-base md:text-xl text-slate-300 max-w-3xl mx-auto mb-10">
+            Página principal redesenhada com hierarquia visual melhor, navegação mais clara e experiência mais elegante
+            em desktop e celular.
           </p>
 
           <div className="flex gap-4 justify-center flex-wrap">
@@ -42,29 +49,32 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="px-4 py-8">
+      <section className="relative px-4 py-8">
         <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-5">
           {highlights.map((item) => (
-            <article key={item.title} className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
-              <h2 className="text-xl font-bold mb-2">{item.title}</h2>
+            <article
+              key={item.title}
+              className="group rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-md transition-all duration-300 hover:border-cyan-300/30 hover:bg-white/[0.07] hover:-translate-y-1"
+            >
+              <h2 className="text-xl font-bold mb-2 group-hover:text-cyan-200 transition-colors">{item.title}</h2>
               <p className="text-slate-300 text-sm leading-relaxed">{item.description}</p>
             </article>
           ))}
         </div>
       </section>
 
-      <section id="loja" className="px-4 py-16">
-        <div className="max-w-5xl mx-auto rounded-3xl border border-amber-300/20 bg-amber-500/10 p-8 md:p-10">
+      <section id="loja" className="relative px-4 py-16">
+        <div className="max-w-5xl mx-auto rounded-3xl border border-amber-300/20 bg-gradient-to-r from-amber-500/10 to-orange-500/10 p-8 md:p-10 shadow-[0_20px_80px_rgba(245,158,11,0.12)]">
           <p className="uppercase tracking-[0.25em] text-amber-200 text-xs mb-3">Loja virtual</p>
           <h2 className="text-3xl md:text-4xl font-black mb-3">Loja temporariamente sem produtos</h2>
           <p className="text-amber-100/90">
-            A seção da loja foi simplificada: sem imagens e sem produtos no momento. Em breve ela volta com a nova
-            curadoria.
+            A seção da loja foi simplificada: sem imagens e sem produtos no momento. Em breve ela volta com nova
+            curadoria e nova experiência de compra.
           </p>
         </div>
       </section>
 
-      <section id="chat" className="px-4 py-16">
+      <section id="chat" className="relative px-4 py-16">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
             <div>
@@ -82,8 +92,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="contact" className="px-4 py-16">
-        <div className="max-w-4xl mx-auto text-center bg-white/10 border border-white/10 rounded-2xl p-10">
+      <section id="contact" className="relative px-4 py-16">
+        <div className="max-w-4xl mx-auto text-center bg-white/[0.06] border border-white/10 rounded-2xl p-10 backdrop-blur-md">
           <h2 className="text-3xl font-bold mb-4">Contato & Parcerias</h2>
           <p className="text-slate-300 mb-6">Para shows, publis e projetos digitais, fale com a equipe.</p>
           <a href="mailto:contato@hebertpaes.com" className="text-cyan-300 text-xl hover:text-cyan-200">
@@ -92,7 +102,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="py-10 text-center text-slate-400 border-t border-white/10 mt-8">
+      <footer className="relative py-10 text-center text-slate-400 border-t border-white/10 mt-8">
         <p>© 2026 Hebert Paes. Todos os direitos reservados.</p>
       </footer>
     </main>

@@ -13,24 +13,24 @@ type Episode = {
 const defaultEpisodes: Episode[] = [
   {
     id: "ep1",
-    title: "Hebert Paes",
-    summary: "Conteúdo em áudio disponível nas plataformas.",
-    duration: "28 min",
-    link: "https://music.youtube.com/playlist?list=OLAK5uy_mDljpGt6-_TCOS9EX1nG7RvQrDTsXJX0k&si=Ys2ZA9hDhSX45ukt",
+    title: "Automação prática para negócios locais",
+    summary: "Como automatizar processos de atendimento sem perder qualidade.",
+    duration: "22 min",
+    link: "#",
   },
   {
     id: "ep2",
-    title: "Hebert Paes",
-    summary: "Conteúdo em áudio disponível nas plataformas.",
-    duration: "34 min",
-    link: "https://open.spotify.com/search/hebert%20paes",
+    title: "Execução sem enrolação",
+    summary: "Framework simples para sair do planejamento e entrar em produção.",
+    duration: "27 min",
+    link: "#",
   },
   {
     id: "ep3",
-    title: "Hebert Paes",
-    summary: "Conteúdo em áudio disponível nas plataformas.",
-    duration: "31 min",
-    link: "https://music.apple.com/br/search?term=hebert%20paes",
+    title: "Produto, vendas e consistência",
+    summary: "Estratégias para manter ritmo de entrega com foco em resultado.",
+    duration: "30 min",
+    link: "#",
   },
 ];
 
@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
     .map((e: any) => ({
       id: String(e.id),
       title: String(e.title || "Hebert Paes"),
-      summary: String(e.summary || "Conteúdo em áudio disponível nas plataformas."),
+      summary: String(e.summary || "Episódio do podcast com conteúdo prático e direto."),
       duration: String(e.duration || "--"),
       link: String(e.link || "#"),
     }));

@@ -11,9 +11,27 @@ type Episode = {
 };
 
 const fallbackEpisodes: Episode[] = [
-  { id: "ep1", title: "Hebert Paes", summary: "Conteúdo em áudio disponível nas plataformas.", duration: "28 min", link: "https://music.youtube.com/playlist?list=OLAK5uy_mDljpGt6-_TCOS9EX1nG7RvQrDTsXJX0k&si=Ys2ZA9hDhSX45ukt" },
-  { id: "ep2", title: "Hebert Paes", summary: "Conteúdo em áudio disponível nas plataformas.", duration: "34 min", link: "https://open.spotify.com/search/hebert%20paes" },
-  { id: "ep3", title: "Hebert Paes", summary: "Conteúdo em áudio disponível nas plataformas.", duration: "31 min", link: "https://music.apple.com/br/search?term=hebert%20paes" },
+  {
+    id: "ep1",
+    title: "Automação prática para negócios locais",
+    summary: "Como automatizar processos de atendimento sem perder qualidade.",
+    duration: "22 min",
+    link: "#",
+  },
+  {
+    id: "ep2",
+    title: "Execução sem enrolação",
+    summary: "Framework simples para sair do planejamento e entrar em produção.",
+    duration: "27 min",
+    link: "#",
+  },
+  {
+    id: "ep3",
+    title: "Produto, vendas e consistência",
+    summary: "Estratégias para manter ritmo de entrega com foco em resultado.",
+    duration: "30 min",
+    link: "#",
+  },
 ];
 
 export default function PodcastPage() {
@@ -29,11 +47,11 @@ export default function PodcastPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-900 via-violet-950 to-gray-900 text-white px-4 py-16">
+    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-violet-950 to-slate-900 text-white px-4 py-16">
       <div className="max-w-6xl mx-auto">
         <p className="uppercase tracking-[0.3em] text-violet-300 text-sm mb-4">hebertpaes.com/podcast</p>
         <h1 className="text-5xl md:text-6xl font-black mb-6">Podcast de Hebert Paes</h1>
-        <p className="text-gray-300 max-w-3xl mb-10">
+        <p className="text-slate-300 max-w-3xl mb-10">
           Episódios sobre tecnologia, automação, produto e execução. Conteúdo direto, prático e atualizado.
         </p>
 
@@ -42,15 +60,17 @@ export default function PodcastPage() {
             <article key={episode.id} className="bg-white/10 border border-white/10 rounded-2xl p-5">
               <p className="text-violet-200 text-xs mb-2">{episode.duration}</p>
               <h2 className="font-bold text-xl mb-2">{episode.title}</h2>
-              <p className="text-gray-300 text-sm mb-4">{episode.summary}</p>
-              <a href={episode.link} target="_blank" rel="noopener noreferrer" className="inline-block bg-violet-500 hover:bg-violet-400 text-white px-4 py-2 rounded-lg text-sm font-semibold">
-                Ouvir episódio
-              </a>
+              <p className="text-slate-300 text-sm mb-4">{episode.summary}</p>
+              <span className="inline-block bg-violet-500/25 text-violet-100 px-4 py-2 rounded-lg text-sm font-semibold">
+                Episódio disponível em breve
+              </span>
             </article>
           ))}
         </section>
 
-        <a href="/" className="text-violet-200 hover:text-violet-100 underline">← Voltar para home</a>
+        <a href="/" className="text-violet-200 hover:text-violet-100 underline">
+          ← Voltar para home
+        </a>
       </div>
     </main>
   );

@@ -16,7 +16,32 @@ type Overview = {
   updatedAt: string;
 };
 
+type AuditItem = {
+  id: string;
+  when: string;
+  action: string;
+  status: 'ok' | 'warn';
+};
+
 const shellCard = 'rounded-3xl border border-white/10 bg-white/[0.05] backdrop-blur-xl';
+const AUDIT_KEY = 'admin_audit_log_v1';
+
+function pushAudit(action: string, status: 'ok' | 'warn' = 'ok') {
+  if (typeof window === 'undefined') return;
+  const prev = JSON.parse(localStorage.getItem(AUDIT_KEY) || '[]') as AuditItem[];
+  const item: AuditItem = {
+    id: crypto.randomUUID(),
+    when: new Date().toISOString(),
+    action,
+    status,
+  };
+  localStorage.setItem(AUDIT_KEY, JSON.stringify([item, ...prev].slice(0, 30)));
+}
+
+function readAudit(): AuditItem[] {
+  if (typeof window === 'undefined') return [];
+  return JSON.parse(localStorage.getItem(AUDIT_KEY) || '[]') as AuditItem[];
+}
 
 export default function AdminDashboard() {
   const [episodes, setEpisodes] = useState<Episode[]>([]);
@@ -24,6 +49,9 @@ export default function AdminDashboard() {
   const [loadingOverview, setLoadingOverview] = useState(true);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState('');
+  const [auditLog, setAuditLog] = useState<AuditItem[]>([]);
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState<'all' | 'withLink' | 'withoutLink'>('all');
 
   const loadData = async () => {
     setLoadingOverview(true);
@@ -34,19 +62,26 @@ export default function AdminDashboard() {
 
       setEpisodes(podcastData?.episodes || []);
       setOverview(overviewData?.ok ? overviewData : null);
+      pushAudit('Atualização manual do dashboard', 'ok');
+      setAuditLog(readAudit());
     } catch {
       setEpisodes([]);
       setOverview(null);
+      pushAudit('Falha ao atualizar dashboard', 'warn');
+      setAuditLog(readAudit());
     } finally {
       setLoadingOverview(false);
     }
   };
 
   useEffect(() => {
+    pushAudit('Login no painel admin', 'ok');
+    setAuditLog(readAudit());
     loadData();
   }, []);
 
   const handleLogout = () => {
+    pushAudit('Logout do painel admin', 'ok');
     window.location.href = '/api/auth/logout';
   };
 
@@ -64,9 +99,18 @@ export default function AdminDashboard() {
         body: JSON.stringify({ episodes }),
       });
       const data = await res.json();
-      setNotice(data?.ok ? 'Podcast atualizado com sucesso.' : 'Falha ao salvar podcast.');
+      if (data?.ok) {
+        setNotice('Podcast atualizado com sucesso.');
+        pushAudit('Episódios salvos no painel admin', 'ok');
+      } else {
+        setNotice('Falha ao salvar podcast.');
+        pushAudit('Falha ao salvar episódios', 'warn');
+      }
+      setAuditLog(readAudit());
     } catch {
       setNotice('Erro ao salvar podcast.');
+      pushAudit('Erro de rede ao salvar episódios', 'warn');
+      setAuditLog(readAudit());
     } finally {
       setSaving(false);
     }
@@ -95,6 +139,34 @@ export default function AdminDashboard() {
     ],
     [overview]
   );
+
+  const metrics = useMemo(() => {
+    const secureAuth = Number(Boolean(overview?.auth?.google)) + Number(Boolean(overview?.auth?.github));
+    const infraHealth = Number(Boolean(overview?.infra?.sql)) + Number(Boolean(overview?.infra?.openclawProxy));
+    const withLinks = episodes.filter((e) => Boolean(e.link?.trim())).length;
+    return [
+      { label: 'OAuth score', value: secureAuth, max: 2 },
+      { label: 'Infra score', value: infraHealth, max: 2 },
+      { label: 'Episódios com link', value: withLinks, max: Math.max(episodes.length, 1) },
+    ];
+  }, [overview, episodes]);
+
+  const filteredEpisodes = useMemo(() => {
+    const normalized = search.trim().toLowerCase();
+
+    return episodes.filter((ep) => {
+      const bySearch =
+        !normalized ||
+        ep.title.toLowerCase().includes(normalized) ||
+        ep.summary.toLowerCase().includes(normalized) ||
+        ep.duration.toLowerCase().includes(normalized);
+
+      const hasLink = Boolean(ep.link?.trim());
+      const byFilter = filter === 'all' || (filter === 'withLink' ? hasLink : !hasLink);
+
+      return bySearch && byFilter;
+    });
+  }, [episodes, search, filter]);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#030712] text-white">
@@ -136,6 +208,21 @@ export default function AdminDashboard() {
         </div>
 
         <section className="grid gap-4 md:grid-cols-3">
+          {metrics.map((m) => {
+            const percent = Math.round((m.value / m.max) * 100);
+            return (
+              <article key={m.label} className={`${shellCard} p-4`}>
+                <p className="mb-2 text-xs uppercase tracking-[0.2em] text-slate-300">{m.label}</p>
+                <p className="text-2xl font-black text-cyan-200">{m.value}/{m.max}</p>
+                <div className="mt-3 h-2 rounded-full bg-white/10">
+                  <div className="h-2 rounded-full bg-gradient-to-r from-cyan-400 to-violet-400" style={{ width: `${percent}%` }} />
+                </div>
+              </article>
+            );
+          })}
+        </section>
+
+        <section className="mt-6 grid gap-4 md:grid-cols-3">
           {statusCards.map((card) => (
             <article key={card.title} className={`${shellCard} p-4`}>
               <p className="mb-2 text-xs uppercase tracking-[0.2em] text-slate-300">{card.title}</p>
@@ -154,11 +241,33 @@ export default function AdminDashboard() {
         </section>
 
         <section className={`${shellCard} mt-6 p-6`}>
-          <h3 className="text-xl font-bold">Editor de Podcast</h3>
-          <p className="mb-4 mt-1 text-slate-300">Edite títulos, descrições e links com preview rápido para publicação.</p>
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <h3 className="text-xl font-bold">Editor de Podcast</h3>
+            <span className="rounded-full border border-white/20 px-2 py-0.5 text-xs text-slate-300">{filteredEpisodes.length} resultados</span>
+          </div>
+
+          <p className="mb-4 mt-1 text-slate-300">Edite títulos, descrições e links com busca e filtros rápidos.</p>
+
+          <div className="mb-4 grid gap-2 md:grid-cols-[1fr_auto]">
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar por título, resumo ou duração..."
+              className="w-full rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-white outline-none focus:border-cyan-300/60"
+            />
+            <select
+              value={filter}
+              onChange={(e) => setFilter(e.target.value as 'all' | 'withLink' | 'withoutLink')}
+              className="rounded-xl border border-white/20 bg-[#0b1222] px-3 py-2 text-white outline-none"
+            >
+              <option value="all">Todos</option>
+              <option value="withLink">Com link</option>
+              <option value="withoutLink">Sem link</option>
+            </select>
+          </div>
 
           <div className="space-y-4">
-            {episodes.map((ep) => (
+            {filteredEpisodes.map((ep) => (
               <div key={ep.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
                 <input
                   value={ep.title}
@@ -188,6 +297,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
             ))}
+            {filteredEpisodes.length === 0 && <p className="text-sm text-slate-300">Nenhum episódio encontrado para o filtro atual.</p>}
           </div>
 
           <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -199,6 +309,36 @@ export default function AdminDashboard() {
               {saving ? 'Salvando...' : 'Salvar podcast'}
             </button>
             {notice && <span className="text-sm text-cyan-200">{notice}</span>}
+          </div>
+        </section>
+
+        <section className={`${shellCard} mt-6 p-6`}>
+          <h3 className="text-xl font-bold">Auditoria rápida</h3>
+          <p className="mb-4 mt-1 text-slate-300">Últimas ações no painel admin desta sessão/navegador.</p>
+
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[640px] text-sm">
+              <thead>
+                <tr className="border-b border-white/10 text-left text-slate-300">
+                  <th className="py-2 pr-2">Horário</th>
+                  <th className="py-2 pr-2">Ação</th>
+                  <th className="py-2">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {auditLog.map((item) => (
+                  <tr key={item.id} className="border-b border-white/5">
+                    <td className="py-2 pr-2">{new Date(item.when).toLocaleString('pt-BR')}</td>
+                    <td className="py-2 pr-2">{item.action}</td>
+                    <td className="py-2">
+                      <span className={`rounded-full px-2 py-0.5 text-xs ${item.status === 'ok' ? 'bg-emerald-400/20 text-emerald-200' : 'bg-amber-400/20 text-amber-200'}`}>
+                        {item.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </section>
       </main>

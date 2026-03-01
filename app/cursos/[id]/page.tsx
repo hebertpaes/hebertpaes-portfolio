@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { courseModulesById, courses } from "@/lib/cursos-data";
 
 type Props = { params: { id: string } };
@@ -11,6 +11,16 @@ export default function CursoPlayerPage({ params }: Props) {
   const flatLessons = modules.flatMap((m) => m.lessons);
   const [activeLessonId, setActiveLessonId] = useState(flatLessons[0]?.id || "");
   const [completed, setCompleted] = useState<Record<string, boolean>>({});
+  const [enrollmentChecked, setEnrollmentChecked] = useState(false);
+  const [hasAccess, setHasAccess] = useState(false);
+
+  useEffect(() => {
+    fetch(`/api/cursos/enrollments/me?courseId=${params.id}`)
+      .then((r) => r.json())
+      .then((d) => setHasAccess(Boolean(d?.enrolled)))
+      .catch(() => setHasAccess(false))
+      .finally(() => setEnrollmentChecked(true));
+  }, [params.id]);
 
   const activeLesson = flatLessons.find((l) => l.id === activeLessonId) || flatLessons[0];
   const progress = flatLessons.length ? Math.round((Object.keys(completed).length / flatLessons.length) * 100) : 0;
@@ -23,8 +33,34 @@ export default function CursoPlayerPage({ params }: Props) {
     );
   }
 
+  if (!enrollmentChecked) {
+    return (
+      <main className="min-h-screen bg-slate-950 px-4 py-16 text-white">
+        <div className="mx-auto max-w-3xl rounded-2xl border border-white/10 bg-white/5 p-6">Validando acesso...</div>
+      </main>
+    );
+  }
+
+  if (!hasAccess) {
+    return (
+      <main className="min-h-screen bg-slate-950 px-4 py-16 text-white">
+        <div className="mx-auto max-w-3xl rounded-2xl border border-white/10 bg-white/5 p-6">
+          <h1 className="text-2xl font-bold">Acesso restrito</h1>
+          <p className="mt-2 text-slate-300">Você precisa de matrícula ativa para assistir este curso.</p>
+          <div className="mt-4 flex gap-2">
+            <a href={`/cursos/checkout?courseId=${course.id}`} className="rounded-xl border border-white/20 bg-cyan-500 px-4 py-2 font-semibold text-slate-950 hover:bg-cyan-400">Comprar agora</a>
+            <a href="/cursos/minha-area" className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 font-semibold hover:bg-white/15">Minha área</a>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-[#04060f] px-4 py-10 text-white">
+      <div className="mx-auto mb-4 max-w-7xl">
+        <a href="/cursos/minha-area" className="text-sm text-cyan-200 hover:text-cyan-100">← Minha área</a>
+      </div>
       <div className="mx-auto grid max-w-7xl gap-4 lg:grid-cols-[1.35fr_0.65fr]">
         <section className="rounded-3xl border border-white/10 bg-white/[0.05] p-4 backdrop-blur-xl">
           <h1 className="mb-3 text-3xl font-black">{course.title}</h1>
@@ -88,13 +124,6 @@ export default function CursoPlayerPage({ params }: Props) {
               </div>
             ))}
           </div>
-
-          <a
-            href={`/cursos/checkout?courseId=${course.id}`}
-            className="mt-4 inline-flex w-full items-center justify-center rounded-xl border border-white/20 bg-violet-600 px-4 py-2.5 font-semibold hover:bg-violet-500"
-          >
-            Comprar acesso / checkout
-          </a>
         </aside>
       </div>
     </main>

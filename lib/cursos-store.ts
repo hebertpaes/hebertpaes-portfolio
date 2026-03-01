@@ -124,3 +124,45 @@ export async function markCheckoutPaidAndEnroll(checkoutId: string) {
 
   return { ok: true };
 }
+
+export async function getEnrollmentsByEmail(emailRaw: string) {
+  await ensureTables();
+  const email = emailRaw.trim().toLowerCase();
+  const pool = await getSqlPool();
+  const result = await pool
+    .request()
+    .input("email", sql.NVarChar(255), email)
+    .query(`
+      SELECT checkout_id AS checkoutId, course_id AS courseId, student_name AS studentName, student_email AS studentEmail, status, created_at AS createdAt
+      FROM dbo.course_enrollments
+      WHERE student_email = @email AND status = 'active'
+      ORDER BY created_at DESC
+    `);
+
+  return result.recordset as Array<{
+    checkoutId: string;
+    courseId: string;
+    studentName: string;
+    studentEmail: string;
+    status: string;
+    createdAt: string;
+  }>;
+}
+
+export async function hasEnrollmentForCourse(emailRaw: string, courseIdRaw: string) {
+  await ensureTables();
+  const email = emailRaw.trim().toLowerCase();
+  const courseId = courseIdRaw.trim();
+  const pool = await getSqlPool();
+  const result = await pool
+    .request()
+    .input("email", sql.NVarChar(255), email)
+    .input("courseId", sql.NVarChar(64), courseId)
+    .query(`
+      SELECT TOP 1 id
+      FROM dbo.course_enrollments
+      WHERE student_email = @email AND course_id = @courseId AND status = 'active'
+    `);
+
+  return result.recordset.length > 0;
+}

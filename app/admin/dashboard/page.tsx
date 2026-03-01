@@ -195,6 +195,30 @@ export default function AdminDashboard() {
 
   const warnCount = useMemo(() => auditLog.filter((item) => item.status === 'warn').length, [auditLog]);
 
+  const trendByDay = useMemo(() => {
+    const today = new Date();
+    const days = Array.from({ length: 7 }).map((_, idx) => {
+      const d = new Date(today);
+      d.setDate(today.getDate() - (6 - idx));
+      const key = d.toISOString().slice(0, 10);
+      return { key, label: `${d.getDate()}/${d.getMonth() + 1}`, ok: 0, warn: 0 };
+    });
+
+    const map = new Map(days.map((d) => [d.key, d]));
+
+    for (const item of auditLog) {
+      const key = new Date(item.createdAt).toISOString().slice(0, 10);
+      const slot = map.get(key);
+      if (!slot) continue;
+      if (item.status === 'warn') slot.warn += 1;
+      else slot.ok += 1;
+    }
+
+    return days;
+  }, [auditLog]);
+
+  const maxTrend = useMemo(() => Math.max(1, ...trendByDay.map((d) => d.ok + d.warn)), [trendByDay]);
+
   const exportAuditCsv = () => {
     const rows = [
       ['createdAt', 'adminLogin', 'action', 'context', 'status'],
@@ -265,6 +289,34 @@ export default function AdminDashboard() {
             </p>
           </section>
         )}
+
+        <section className={`${shellCard} mb-4 p-4`}>
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="text-lg font-bold">Tendência da auditoria (7 dias)</h3>
+            <p className="text-xs text-slate-300">ok vs warn</p>
+          </div>
+          <div className="grid grid-cols-7 gap-2">
+            {trendByDay.map((day) => {
+              const total = day.ok + day.warn;
+              const height = Math.max(6, Math.round((total / maxTrend) * 88));
+              const warnHeight = total ? Math.max(2, Math.round((day.warn / total) * height)) : 0;
+              const okHeight = Math.max(0, height - warnHeight);
+
+              return (
+                <div key={day.key} className="flex flex-col items-center gap-1">
+                  <div className="flex h-[96px] w-full items-end justify-center rounded-lg border border-white/10 bg-black/20 px-1">
+                    <div className="flex w-full max-w-[26px] flex-col justify-end overflow-hidden rounded-sm">
+                      {okHeight > 0 && <div className="w-full bg-emerald-400/80" style={{ height: `${okHeight}px` }} />}
+                      {warnHeight > 0 && <div className="w-full bg-amber-400/90" style={{ height: `${warnHeight}px` }} />}
+                    </div>
+                  </div>
+                  <span className="text-[10px] text-slate-300">{day.label}</span>
+                  <span className="text-[10px] text-slate-400">{total}</span>
+                </div>
+              );
+            })}
+          </div>
+        </section>
 
         <section className="grid gap-4 md:grid-cols-3">
           {metrics.map((m) => {

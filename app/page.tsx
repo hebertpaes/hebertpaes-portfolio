@@ -33,6 +33,7 @@ const animatedWords = ["Design", "inovador"];
 
 export default function Home() {
   const [isLight, setIsLight] = useState(false);
+  const [loadEmbeddedChat, setLoadEmbeddedChat] = useState(false);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-color-scheme: light)");
@@ -111,7 +112,7 @@ export default function Home() {
 
       <section data-reveal className="reveal relative px-4 pt-24 pb-20">
         <div
-          className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end"
+          className="hero-parallax mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end"
           style={{ transform: "translate3d(var(--hero-x), var(--hero-y), 0)" }}
         >
           <div>
@@ -208,7 +209,22 @@ export default function Home() {
           </div>
 
           <div className="overflow-hidden rounded-3xl border border-white/15 bg-black/25 shadow-[0_30px_80px_rgba(0,0,0,0.5)] backdrop-blur-xl">
-            <iframe src="/openclaw/chat" title="Chat Jabes" className="h-[760px] w-full bg-slate-950" loading="lazy" />
+            {loadEmbeddedChat ? (
+              <iframe src="/openclaw/chat" title="Chat Jabes" className="h-[760px] w-full bg-slate-950" loading="lazy" />
+            ) : (
+              <div className="flex h-[760px] flex-col items-center justify-center px-6 text-center">
+                <p className={`max-w-lg text-base ${themeClasses.softText}`}>
+                  Para priorizar velocidade inicial da página, o chat embutido é carregado sob demanda.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setLoadEmbeddedChat(true)}
+                  className={`${ctaClass} ${themeClasses.ctaChat} mt-6`}
+                >
+                  Carregar chat integrado
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -243,6 +259,10 @@ export default function Home() {
             transparent 60%
           );
           transition: background 120ms linear;
+        }
+
+        .hero-parallax {
+          will-change: transform;
         }
 
         .hero-word {

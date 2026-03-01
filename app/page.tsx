@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const ctaClass =
   "inline-flex items-center justify-center rounded-2xl px-6 py-3 font-semibold transition-all duration-300 hover:-translate-y-0.5 shadow-[0_12px_30px_rgba(0,0,0,0.25)] border backdrop-blur-sm";
@@ -31,6 +31,8 @@ const metrics = [
 
 export default function Home() {
   const [isLight, setIsLight] = useState(false);
+  const [heroOffset, setHeroOffset] = useState({ x: 0, y: 0 });
+  const animatedWords = useMemo(() => ["Design", "inovador"], []);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-color-scheme: light)");
@@ -57,6 +59,10 @@ export default function Home() {
     const handleMouseMove = (event: MouseEvent) => {
       document.documentElement.style.setProperty("--cursor-x", `${event.clientX}px`);
       document.documentElement.style.setProperty("--cursor-y", `${event.clientY}px`);
+
+      const x = (event.clientX / window.innerWidth - 0.5) * 18;
+      const y = (event.clientY / window.innerHeight - 0.5) * 18;
+      setHeroOffset({ x, y });
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -98,13 +104,26 @@ export default function Home() {
       <div className="pointer-events-none absolute right-[-120px] top-20 h-80 w-80 rounded-full bg-violet-300/20 blur-3xl animate-pulse [animation-delay:600ms]" />
 
       <section data-reveal className="reveal relative px-4 pt-24 pb-20">
-        <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+        <div
+          className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end"
+          style={{ transform: `translate3d(${heroOffset.x}px, ${heroOffset.y}px, 0)` }}
+        >
           <div>
             <p className="mb-4 inline-flex rounded-full border border-cyan-200/20 bg-cyan-200/10 px-4 py-1 text-xs uppercase tracking-[0.28em] text-cyan-200">
               Hebert Paes • Nova Experiência Digital
             </p>
             <h1 className="text-5xl font-black leading-[0.95] md:text-7xl">
-              Design inovador
+              <span className="block" aria-label="Design inovador">
+                {animatedWords.map((word, index) => (
+                  <span
+                    key={word}
+                    className="hero-word inline-block"
+                    style={{ animationDelay: `${index * 120}ms` }}
+                  >
+                    {word}&nbsp;
+                  </span>
+                ))}
+              </span>
               <span className="block bg-gradient-to-r from-cyan-200 via-sky-300 to-violet-300 bg-clip-text text-transparent">
                 com presença de palco
               </span>
@@ -216,6 +235,19 @@ export default function Home() {
             transparent 60%
           );
           transition: background 120ms linear;
+        }
+
+        .hero-word {
+          opacity: 0;
+          transform: translateY(14px) scale(0.98);
+          animation: riseWords 700ms ease forwards;
+        }
+
+        @keyframes riseWords {
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
         }
 
         .reveal {

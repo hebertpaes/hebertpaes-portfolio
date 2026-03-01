@@ -58,7 +58,7 @@ export default function AdminDashboard() {
   const [cursosOverview, setCursosOverview] = useState<CursosOverview | null>(null);
   const [marketplaceOverview, setMarketplaceOverview] = useState<MarketplaceOverview | null>(null);
   const [marketplaceItems, setMarketplaceItems] = useState<MarketplaceItem[]>([]);
-  const [mkForm, setMkForm] = useState({ type: "produto", title: "", description: "", priceLabel: "", category: "" });
+  const [mkForm, setMkForm] = useState({ id: "", type: "produto", title: "", description: "", priceLabel: "", category: "", active: true });
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'withLink' | 'withoutLink'>('all');
   const [auditAdminFilter, setAuditAdminFilter] = useState('all');
@@ -184,10 +184,37 @@ export default function AdminDashboard() {
     });
     const data = await res.json();
     if (data?.ok) {
-      setMkForm({ type: 'produto', title: '', description: '', priceLabel: '', category: '' });
+      setMkForm({ id: '', type: 'produto', title: '', description: '', priceLabel: '', category: '', active: true });
       await recordAudit('Novo item marketplace criado', 'ok', data.item?.id || '');
       await loadData(false);
     }
+  };
+
+  const saveMarketplaceItem = async () => {
+    if (!mkForm.id) return addMarketplaceItem();
+    const res = await fetch('/api/admin/marketplace/items', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(mkForm),
+    });
+    const data = await res.json();
+    if (data?.ok) {
+      await recordAudit('Item marketplace atualizado', 'ok', mkForm.id);
+      setMkForm({ id: '', type: 'produto', title: '', description: '', priceLabel: '', category: '', active: true });
+      await loadData(false);
+    }
+  };
+
+  const editMarketplaceItem = (item: MarketplaceItem) => {
+    setMkForm({
+      id: item.id,
+      type: item.type,
+      title: item.title,
+      description: item.description,
+      priceLabel: item.priceLabel,
+      category: item.category,
+      active: item.active,
+    });
   };
 
   const toggleMarketplaceItem = async (id: string, active: boolean) => {
@@ -497,9 +524,25 @@ export default function AdminDashboard() {
             <input value={mkForm.title} onChange={(e) => setMkForm((p) => ({ ...p, title: e.target.value }))} placeholder="Título" className="rounded-xl border border-white/20 bg-white/10 px-3 py-2" />
             <input value={mkForm.category} onChange={(e) => setMkForm((p) => ({ ...p, category: e.target.value }))} placeholder="Categoria" className="rounded-xl border border-white/20 bg-white/10 px-3 py-2" />
             <input value={mkForm.priceLabel} onChange={(e) => setMkForm((p) => ({ ...p, priceLabel: e.target.value }))} placeholder="Preço (ex: R$ 297)" className="rounded-xl border border-white/20 bg-white/10 px-3 py-2" />
-            <button onClick={addMarketplaceItem} className="rounded-xl border border-white/20 bg-cyan-500 px-3 py-2 font-semibold text-slate-950 hover:bg-cyan-400">Adicionar item</button>
+            <button onClick={saveMarketplaceItem} className="rounded-xl border border-white/20 bg-cyan-500 px-3 py-2 font-semibold text-slate-950 hover:bg-cyan-400">{mkForm.id ? 'Salvar edição' : 'Adicionar item'}</button>
           </div>
-          <textarea value={mkForm.description} onChange={(e) => setMkForm((p) => ({ ...p, description: e.target.value }))} placeholder="Descrição do item" className="mb-4 min-h-[70px] w-full rounded-xl border border-white/20 bg-white/10 px-3 py-2" />
+          <textarea value={mkForm.description} onChange={(e) => setMkForm((p) => ({ ...p, description: e.target.value }))} placeholder="Descrição do item" className="mb-2 min-h-[70px] w-full rounded-xl border border-white/20 bg-white/10 px-3 py-2" />
+          {mkForm.id && (
+            <button onClick={() => setMkForm({ id: '', type: 'produto', title: '', description: '', priceLabel: '', category: '', active: true })} className="mb-4 rounded-lg border border-white/20 px-3 py-1 text-sm hover:bg-white/10">Cancelar edição ({mkForm.id})</button>
+          )}
+
+          <div className="mb-4 rounded-2xl border border-white/10 bg-black/20 p-4">
+            <p className="mb-2 text-sm font-semibold">Histórico de pedidos por item (top)</p>
+            <div className="space-y-1 text-sm">
+              {(marketplaceOverview?.topItems || []).map((row) => (
+                <div key={row.itemId} className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-3 py-1.5">
+                  <span>{row.itemId}</span>
+                  <span className="font-semibold text-cyan-200">{row.orders} pedidos</span>
+                </div>
+              ))}
+              {(marketplaceOverview?.topItems || []).length === 0 && <p className="text-slate-300">Sem pedidos ainda.</p>}
+            </div>
+          </div>
 
           <div className="space-y-2">
             {marketplaceItems.map((item) => (
@@ -509,6 +552,7 @@ export default function AdminDashboard() {
                   <p className="text-xs text-slate-300">{item.category} • {item.priceLabel} • {item.id}</p>
                 </div>
                 <div className="flex gap-2">
+                  <button onClick={() => editMarketplaceItem(item)} className="rounded-lg border border-cyan-300/30 px-3 py-1 text-sm text-cyan-200 hover:bg-cyan-400/10">Editar</button>
                   <button onClick={() => toggleMarketplaceItem(item.id, item.active)} className="rounded-lg border border-white/20 px-3 py-1 text-sm hover:bg-white/10">{item.active ? 'Desativar' : 'Ativar'}</button>
                   <button onClick={() => removeMarketplaceItem(item.id)} className="rounded-lg border border-rose-300/30 px-3 py-1 text-sm text-rose-200 hover:bg-rose-400/10">Excluir</button>
                 </div>

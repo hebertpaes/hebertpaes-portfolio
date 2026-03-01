@@ -239,18 +239,67 @@ export async function createMarketplaceItem(input: Omit<MarketplaceItem, "id"> &
   return item;
 }
 
-export async function updateMarketplaceItemActive(id: string, active: boolean) {
+export async function updateMarketplaceItem(input: {
+  id: string;
+  title: string;
+  description: string;
+  priceLabel: string;
+  category: string;
+  type: "produto" | "servico";
+  active: boolean;
+}) {
   try {
     await ensureTables();
     const pool = await getSqlPool();
-    await pool.request().input("id", sql.NVarChar(64), id).input("active", sql.Bit, active ? 1 : 0).query(`
-      UPDATE dbo.marketplace_items SET active = @active, updated_at = SYSUTCDATETIME() WHERE id = @id
-    `);
+    await pool
+      .request()
+      .input("id", sql.NVarChar(64), input.id)
+      .input("title", sql.NVarChar(255), input.title)
+      .input("description", sql.NVarChar(1500), input.description)
+      .input("price", sql.NVarChar(64), input.priceLabel)
+      .input("category", sql.NVarChar(128), input.category)
+      .input("type", sql.NVarChar(16), input.type)
+      .input("active", sql.Bit, input.active ? 1 : 0)
+      .query(`
+        UPDATE dbo.marketplace_items
+        SET
+          title = @title,
+          description = @description,
+          price_label = @price,
+          category = @category,
+          item_type = @type,
+          active = @active,
+          updated_at = SYSUTCDATETIME()
+        WHERE id = @id
+      `);
   } catch {
     const items = getMemItems();
-    const item = items.find((i) => i.id === id);
-    if (item) item.active = active;
+    const item = items.find((i) => i.id === input.id);
+    if (item) {
+      item.title = input.title;
+      item.description = input.description;
+      item.priceLabel = input.priceLabel;
+      item.category = input.category;
+      item.type = input.type;
+      item.active = input.active;
+    }
   }
+}
+
+export async function updateMarketplaceItemActive(id: string, active: boolean) {
+  const items = await listMarketplaceItemsAdmin();
+  const current = items.find((i) => i.id === id);
+  if (!current) return;
+
+  await updateMarketplaceItem({
+    id,
+    title: current.title,
+    description: current.description,
+    priceLabel: current.priceLabel,
+    category: current.category,
+    type: current.type,
+    active,
+  });
 }
 
 export async function deleteMarketplaceItem(id: string) {

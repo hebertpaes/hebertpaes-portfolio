@@ -4,6 +4,7 @@ import {
   createMarketplaceItem,
   deleteMarketplaceItem,
   listMarketplaceItemsAdmin,
+  updateMarketplaceItem,
   updateMarketplaceItemActive,
 } from "@/lib/marketplace-store";
 
@@ -39,6 +40,26 @@ export async function PATCH(req: NextRequest) {
   if (!id) return NextResponse.json({ ok: false, error: "invalid_payload" }, { status: 400 });
 
   await updateMarketplaceItemActive(id, active);
+  return NextResponse.json({ ok: true });
+}
+
+export async function PUT(req: NextRequest) {
+  if (!hasAdminSession(req)) return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  const body = await req.json().catch(() => null);
+
+  const id = String(body?.id || "").trim();
+  const type = String(body?.type || "").toLowerCase();
+  const title = String(body?.title || "").trim();
+  const description = String(body?.description || "").trim();
+  const priceLabel = String(body?.priceLabel || "").trim();
+  const category = String(body?.category || "").trim();
+  const active = Boolean(body?.active);
+
+  if (!id || !title || !description || !priceLabel || !category || !["produto", "servico"].includes(type)) {
+    return NextResponse.json({ ok: false, error: "invalid_payload" }, { status: 400 });
+  }
+
+  await updateMarketplaceItem({ id, type: type as "produto" | "servico", title, description, priceLabel, category, active });
   return NextResponse.json({ ok: true });
 }
 

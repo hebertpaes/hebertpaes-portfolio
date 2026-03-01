@@ -131,16 +131,18 @@ export async function GET(req: NextRequest) {
     res.cookies.set("openclaw_oauth_next", nextPath, {
       httpOnly: true,
       sameSite: "lax",
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       path: "/",
       maxAge: 60 * 10,
+      priority: "high",
     });
     res.cookies.set(`openclaw_oauth_state_${provider}`, state, {
       httpOnly: true,
       sameSite: "lax",
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       path: "/",
       maxAge: 60 * 10,
+      priority: "high",
     });
     return res;
   }
@@ -224,24 +226,27 @@ export async function GET(req: NextRequest) {
     const res = NextResponse.redirect(new URL(req.cookies.get("openclaw_oauth_next")?.value || nextPath, getBaseUrl(req)));
     res.cookies.set(sessionCookieName, sessionToken, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
       maxAge: 60 * 60 * 24 * 7,
+      priority: "high",
     });
     res.cookies.set(`openclaw_oauth_state_${provider}`, "", {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
       maxAge: 0,
+      priority: "high",
     });
     res.cookies.set("openclaw_oauth_next", "", {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
       maxAge: 0,
+      priority: "high",
     });
     return res;
   } catch {

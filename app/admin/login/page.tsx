@@ -5,6 +5,7 @@ import { FormEvent, useState } from "react";
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -35,40 +36,59 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-950 via-slate-900 to-gray-950 px-4">
-      <form onSubmit={submit} className="w-full max-w-md bg-white/10 border border-white/15 rounded-2xl p-8 backdrop-blur">
-        <h1 className="text-3xl font-black text-white mb-2">Admin Login</h1>
-        <p className="text-slate-300 mb-6">Acesso administrativo com validação em banco de dados.</p>
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#020617] px-4 text-white">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_12%,rgba(34,211,238,0.2),transparent_35%),radial-gradient(circle_at_86%_8%,rgba(168,85,247,0.16),transparent_32%),radial-gradient(circle_at_50%_100%,rgba(59,130,246,0.12),transparent_30%)]" />
 
-        <label className="block text-sm text-slate-300 mb-1">E-mail</label>
+      <form onSubmit={submit} className="relative w-full max-w-md rounded-3xl border border-white/15 bg-white/[0.06] p-8 shadow-[0_20px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+        <p className="mb-2 text-xs uppercase tracking-[0.25em] text-cyan-200">Área restrita</p>
+        <h1 className="mb-2 text-3xl font-black">Admin Login</h1>
+        <p className="mb-6 text-slate-300">Acesso administrativo com validação no banco de dados.</p>
+
+        <label className="mb-1 block text-sm text-slate-300">E-mail</label>
         <input
           type="email"
+          autoComplete="username"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full mb-4 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white"
+          className="mb-4 w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-white outline-none transition-all focus:border-cyan-300/60"
           placeholder="admin@hebertpaes.com"
         />
 
-        <label className="block text-sm text-slate-300 mb-1">Senha</label>
-        <input
-          type="password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full mb-4 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white"
-          placeholder="********"
-        />
+        <label className="mb-1 block text-sm text-slate-300">Senha</label>
+        <div className="mb-4 flex gap-2">
+          <input
+            type={showPassword ? "text" : "password"}
+            autoComplete="current-password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-white outline-none transition-all focus:border-cyan-300/60"
+            placeholder="********"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            className="rounded-xl border border-white/20 px-3 text-sm text-slate-200 hover:bg-white/10"
+            aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+          >
+            {showPassword ? "Ocultar" : "Ver"}
+          </button>
+        </div>
 
-        {error && <p className="text-rose-300 text-sm mb-3">{error}</p>}
+        {error && <p className="mb-3 text-sm text-rose-300">{error}</p>}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-cyan-400 hover:bg-cyan-300 disabled:opacity-60 text-slate-950 font-bold rounded-xl px-4 py-3.5 transition-all"
+          className="w-full rounded-xl border border-white/20 bg-cyan-400 px-4 py-3.5 font-bold text-slate-950 transition-all hover:bg-cyan-300 disabled:opacity-60"
         >
           {loading ? "Entrando..." : "Entrar no Admin"}
         </button>
+
+        <a href="/login" className="mt-4 inline-block text-sm text-cyan-200 hover:text-cyan-100">
+          Voltar para login geral
+        </a>
       </form>
     </main>
   );

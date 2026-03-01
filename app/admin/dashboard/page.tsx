@@ -18,30 +18,14 @@ type Overview = {
 
 type AuditItem = {
   id: string;
-  when: string;
+  adminLogin?: string;
   action: string;
   status: 'ok' | 'warn';
+  context?: string | null;
+  createdAt: string;
 };
 
 const shellCard = 'rounded-3xl border border-white/10 bg-white/[0.05] backdrop-blur-xl';
-const AUDIT_KEY = 'admin_audit_log_v1';
-
-function pushAudit(action: string, status: 'ok' | 'warn' = 'ok') {
-  if (typeof window === 'undefined') return;
-  const prev = JSON.parse(localStorage.getItem(AUDIT_KEY) || '[]') as AuditItem[];
-  const item: AuditItem = {
-    id: crypto.randomUUID(),
-    when: new Date().toISOString(),
-    action,
-    status,
-  };
-  localStorage.setItem(AUDIT_KEY, JSON.stringify([item, ...prev].slice(0, 30)));
-}
-
-function readAudit(): AuditItem[] {
-  if (typeof window === 'undefined') return [];
-  return JSON.parse(localStorage.getItem(AUDIT_KEY) || '[]') as AuditItem[];
-}
 
 export default function AdminDashboard() {
   const [episodes, setEpisodes] = useState<Episode[]>([]);
@@ -53,7 +37,29 @@ export default function AdminDashboard() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'withLink' | 'withoutLink'>('all');
 
-  const loadData = async () => {
+  const recordAudit = async (action: string, status: 'ok' | 'warn' = 'ok', context = '') => {
+    try {
+      await fetch('/api/admin/audit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, status, context }),
+      });
+    } catch {
+      // non-blocking
+    }
+  };
+
+  const loadAudit = async () => {
+    try {
+      const res = await fetch('/api/admin/audit?limit=25');
+      const data = await res.json();
+      setAuditLog(data?.items || []);
+    } catch {
+      setAuditLog([]);
+    }
+  };
+
+  const loadData = async (track = true) => {
     setLoadingOverview(true);
     try {
       const [podcastRes, overviewRes] = await Promise.all([fetch('/api/prototype/podcast'), fetch('/api/admin/overview')]);
@@ -62,26 +68,26 @@ export default function AdminDashboard() {
 
       setEpisodes(podcastData?.episodes || []);
       setOverview(overviewData?.ok ? overviewData : null);
-      pushAudit('Atualização manual do dashboard', 'ok');
-      setAuditLog(readAudit());
+      if (track) await recordAudit('Atualização manual do dashboard', 'ok');
     } catch {
       setEpisodes([]);
       setOverview(null);
-      pushAudit('Falha ao atualizar dashboard', 'warn');
-      setAuditLog(readAudit());
+      if (track) await recordAudit('Falha ao atualizar dashboard', 'warn');
     } finally {
+      await loadAudit();
       setLoadingOverview(false);
     }
   };
 
   useEffect(() => {
-    pushAudit('Login no painel admin', 'ok');
-    setAuditLog(readAudit());
-    loadData();
+    (async () => {
+      await recordAudit('Login no painel admin', 'ok');
+      await Promise.all([loadData(false), loadAudit()]);
+    })();
   }, []);
 
-  const handleLogout = () => {
-    pushAudit('Logout do painel admin', 'ok');
+  const handleLogout = async () => {
+    await recordAudit('Logout do painel admin', 'ok');
     window.location.href = '/api/auth/logout';
   };
 
@@ -101,16 +107,16 @@ export default function AdminDashboard() {
       const data = await res.json();
       if (data?.ok) {
         setNotice('Podcast atualizado com sucesso.');
-        pushAudit('Episódios salvos no painel admin', 'ok');
+        await recordAudit('Episódios salvos no painel admin', 'ok', `total=${episodes.length}`);
       } else {
         setNotice('Falha ao salvar podcast.');
-        pushAudit('Falha ao salvar episódios', 'warn');
+        await recordAudit('Falha ao salvar episódios', 'warn');
       }
-      setAuditLog(readAudit());
+      await loadAudit();
     } catch {
       setNotice('Erro ao salvar podcast.');
-      pushAudit('Erro de rede ao salvar episódios', 'warn');
-      setAuditLog(readAudit());
+      await recordAudit('Erro de rede ao salvar episódios', 'warn');
+      await loadAudit();
     } finally {
       setSaving(false);
     }
@@ -199,7 +205,7 @@ export default function AdminDashboard() {
             <p className="text-slate-300">Visão de autenticação, infraestrutura e edição de conteúdo em tempo real.</p>
           </div>
           <button
-            onClick={loadData}
+            onClick={() => loadData(true)}
             disabled={loadingOverview}
             className="rounded-xl border border-white/20 px-4 py-2 text-sm font-semibold text-cyan-100 hover:bg-white/10 disabled:opacity-60"
           >
@@ -313,23 +319,37 @@ export default function AdminDashboard() {
         </section>
 
         <section className={`${shellCard} mt-6 p-6`}>
-          <h3 className="text-xl font-bold">Auditoria rápida</h3>
-          <p className="mb-4 mt-1 text-slate-300">Últimas ações no painel admin desta sessão/navegador.</p>
+          <div className="mb-4 flex items-center justify-between gap-2">
+            <div>
+              <h3 className="text-xl font-bold">Auditoria real (SQL)</h3>
+              <p className="mt-1 text-slate-300">Últimas ações administrativas persistidas no banco.</p>
+            </div>
+            <button
+              onClick={loadAudit}
+              className="rounded-xl border border-white/20 px-3 py-1.5 text-sm font-semibold text-cyan-100 hover:bg-white/10"
+            >
+              Atualizar auditoria
+            </button>
+          </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] text-sm">
+            <table className="w-full min-w-[760px] text-sm">
               <thead>
                 <tr className="border-b border-white/10 text-left text-slate-300">
                   <th className="py-2 pr-2">Horário</th>
+                  <th className="py-2 pr-2">Admin</th>
                   <th className="py-2 pr-2">Ação</th>
+                  <th className="py-2 pr-2">Contexto</th>
                   <th className="py-2">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {auditLog.map((item) => (
                   <tr key={item.id} className="border-b border-white/5">
-                    <td className="py-2 pr-2">{new Date(item.when).toLocaleString('pt-BR')}</td>
+                    <td className="py-2 pr-2">{new Date(item.createdAt).toLocaleString('pt-BR')}</td>
+                    <td className="py-2 pr-2">{item.adminLogin || 'admin'}</td>
                     <td className="py-2 pr-2">{item.action}</td>
+                    <td className="py-2 pr-2 text-slate-300">{item.context || '—'}</td>
                     <td className="py-2">
                       <span className={`rounded-full px-2 py-0.5 text-xs ${item.status === 'ok' ? 'bg-emerald-400/20 text-emerald-200' : 'bg-amber-400/20 text-amber-200'}`}>
                         {item.status}
@@ -337,6 +357,13 @@ export default function AdminDashboard() {
                     </td>
                   </tr>
                 ))}
+                {auditLog.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="py-3 text-slate-300">
+                      Sem registros de auditoria no momento.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

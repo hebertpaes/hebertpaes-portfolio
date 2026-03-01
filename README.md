@@ -24,6 +24,18 @@ npm run build
 npm start
 ```
 
+## Healthcheck de autenticação
+
+Valida rapidamente as rotas públicas e proteção de endpoints admin.
+
+```bash
+# local
+npm run health:auth
+
+# produção
+BASE_URL=https://hebertpaes.com npm run health:auth
+```
+
 ## Stack
 
 - Next.js 16

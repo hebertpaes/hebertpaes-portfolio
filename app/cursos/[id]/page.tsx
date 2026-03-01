@@ -22,8 +22,18 @@ export default function CursoPlayerPage({ params }: Props) {
       .finally(() => setEnrollmentChecked(true));
   }, [params.id]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const prev = JSON.parse(localStorage.getItem("course_view_history") || "[]") as string[];
+    const next = [params.id, ...prev.filter((id) => id !== params.id)].slice(0, 20);
+    localStorage.setItem("course_view_history", JSON.stringify(next));
+  }, [params.id]);
+
   const activeLesson = flatLessons.find((l) => l.id === activeLessonId) || flatLessons[0];
   const progress = flatLessons.length ? Math.round((Object.keys(completed).length / flatLessons.length) * 100) : 0;
+  const alsoLike = course
+    ? courses.filter((c) => c.id !== course.id && (c.category === course.category || c.level === course.level)).slice(0, 3)
+    : [];
 
   if (!course) {
     return (
@@ -126,6 +136,18 @@ export default function CursoPlayerPage({ params }: Props) {
           </div>
         </aside>
       </div>
+
+      <section className="mx-auto mt-6 max-w-7xl rounded-3xl border border-white/10 bg-white/[0.05] p-5 backdrop-blur-xl">
+        <p className="mb-2 text-sm font-semibold">Você também pode gostar</p>
+        <div className="grid gap-3 md:grid-cols-3">
+          {alsoLike.map((c) => (
+            <a key={c.id} href={`/cursos/${c.id}`} className="rounded-2xl border border-white/10 bg-black/20 p-3 hover:bg-black/30">
+              <p className="text-xs text-slate-300">{c.category}</p>
+              <p className="font-semibold">{c.title}</p>
+            </a>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }

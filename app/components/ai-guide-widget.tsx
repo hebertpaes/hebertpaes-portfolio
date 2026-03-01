@@ -19,6 +19,7 @@ export default function AIGuideWidget({ source = "home" }: { source?: "home" | "
   const runGuide = async () => {
     setLoading(true);
     try {
+      if (typeof window !== "undefined") localStorage.setItem("ai_interest", interest);
       const res = await fetch("/api/ai/guide", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

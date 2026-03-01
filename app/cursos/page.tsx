@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { courses } from "@/lib/cursos-data";
 import AIGuideWidget from "@/app/components/ai-guide-widget";
 
@@ -41,11 +41,26 @@ const plans = [
 
 export default function CursosPage() {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
+  const [interest, setInterest] = useState("negocios");
+
+  useEffect(() => {
+    const stored = typeof window !== "undefined" ? localStorage.getItem("ai_interest") : null;
+    if (stored) setInterest(stored);
+    if (typeof window !== "undefined") localStorage.setItem("last_section", "cursos");
+  }, []);
 
   const filteredCourses = useMemo(() => {
     if (selectedCategory === "Todos") return courses;
     return courses.filter((course) => course.category === selectedCategory);
   }, [selectedCategory]);
+
+  const nextBestCourse = useMemo(() => {
+    const preferredCategory =
+      interest === "ia" ? "IA" : interest === "vendas" ? "Vendas" : interest === "conteudo" ? "Conteúdo" : interest === "trafego" ? "Tráfego" : interest === "marketing" ? "Marketing" : "Negócios";
+    return courses.find((c) => c.category === preferredCategory) || courses[0];
+  }, [interest]);
+
+  const alsoLikeCourses = useMemo(() => courses.filter((c) => c.id !== nextBestCourse?.id).slice(0, 3), [nextBestCourse]);
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#04060f] text-white">
@@ -173,6 +188,29 @@ export default function CursosPage() {
       <section className="relative px-4 pb-8">
         <div className="mx-auto max-w-7xl">
           <AIGuideWidget source="cursos" />
+        </div>
+      </section>
+
+      <section className="relative px-4 pb-8">
+        <div className="mx-auto max-w-7xl rounded-3xl border border-white/10 bg-white/[0.05] p-6 backdrop-blur-xl">
+          <p className="text-xs uppercase tracking-[0.2em] text-slate-300">Próximo melhor curso</p>
+          <h3 className="mt-2 text-2xl font-bold">{nextBestCourse?.title}</h3>
+          <p className="mt-1 text-sm text-slate-300">Recomendado com base no seu interesse atual ({interest}).</p>
+          <a href={`/cursos/${nextBestCourse?.id}`} className="mt-4 inline-flex rounded-xl border border-white/20 bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-400">
+            Abrir recomendação
+          </a>
+
+          <div className="mt-5">
+            <p className="mb-2 text-sm font-semibold">Você também pode gostar</p>
+            <div className="grid gap-3 md:grid-cols-3">
+              {alsoLikeCourses.map((course) => (
+                <a key={course.id} href={`/cursos/${course.id}`} className="rounded-2xl border border-white/10 bg-black/20 p-3 hover:bg-black/30">
+                  <p className="text-xs text-slate-300">{course.category}</p>
+                  <p className="font-semibold">{course.title}</p>
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 

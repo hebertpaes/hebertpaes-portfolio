@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 const ctaClass =
   "inline-flex items-center justify-center rounded-2xl px-6 py-3 font-semibold transition-all duration-300 hover:-translate-y-0.5 shadow-[0_12px_30px_rgba(0,0,0,0.25)] border backdrop-blur-sm";
@@ -29,10 +29,10 @@ const metrics = [
   { value: "100%", label: "Interface otimizada para mobile" },
 ];
 
+const animatedWords = ["Design", "inovador"];
+
 export default function Home() {
   const [isLight, setIsLight] = useState(false);
-  const [heroOffset, setHeroOffset] = useState({ x: 0, y: 0 });
-  const animatedWords = useMemo(() => ["Design", "inovador"], []);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-color-scheme: light)");
@@ -56,13 +56,18 @@ export default function Home() {
 
     elements.forEach((el) => observer.observe(el));
 
+    let rafId = 0;
     const handleMouseMove = (event: MouseEvent) => {
-      document.documentElement.style.setProperty("--cursor-x", `${event.clientX}px`);
-      document.documentElement.style.setProperty("--cursor-y", `${event.clientY}px`);
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        document.documentElement.style.setProperty("--cursor-x", `${event.clientX}px`);
+        document.documentElement.style.setProperty("--cursor-y", `${event.clientY}px`);
 
-      const x = (event.clientX / window.innerWidth - 0.5) * 18;
-      const y = (event.clientY / window.innerHeight - 0.5) * 18;
-      setHeroOffset({ x, y });
+        const x = (event.clientX / window.innerWidth - 0.5) * 18;
+        const y = (event.clientY / window.innerHeight - 0.5) * 18;
+        document.documentElement.style.setProperty("--hero-x", `${x}px`);
+        document.documentElement.style.setProperty("--hero-y", `${y}px`);
+      });
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -71,6 +76,7 @@ export default function Home() {
       media.removeEventListener("change", applyTheme);
       observer.disconnect();
       window.removeEventListener("mousemove", handleMouseMove);
+      if (rafId) cancelAnimationFrame(rafId);
     };
   }, []);
 
@@ -106,7 +112,7 @@ export default function Home() {
       <section data-reveal className="reveal relative px-4 pt-24 pb-20">
         <div
           className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end"
-          style={{ transform: `translate3d(${heroOffset.x}px, ${heroOffset.y}px, 0)` }}
+          style={{ transform: "translate3d(var(--hero-x), var(--hero-y), 0)" }}
         >
           <div>
             <p className="mb-4 inline-flex rounded-full border border-cyan-200/20 bg-cyan-200/10 px-4 py-1 text-xs uppercase tracking-[0.28em] text-cyan-200">
@@ -225,6 +231,8 @@ export default function Home() {
         :root {
           --cursor-x: 50vw;
           --cursor-y: 50vh;
+          --hero-x: 0px;
+          --hero-y: 0px;
         }
 
         .cursor-glow {
@@ -259,6 +267,20 @@ export default function Home() {
         .reveal-visible {
           opacity: 1;
           transform: translateY(0);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .cursor-glow {
+            background: none;
+          }
+
+          .hero-word,
+          .reveal {
+            animation: none !important;
+            transition: none !important;
+            opacity: 1;
+            transform: none;
+          }
         }
       `}</style>
     </main>

@@ -25,6 +25,12 @@ type AuditItem = {
   createdAt: string;
 };
 
+type CursosOverview = {
+  totals: { totalCheckouts: number; paidCheckouts: number; pendingCheckouts: number };
+  byCourse: Array<{ courseId: string; enrollments: number }>;
+  recentEnrollments: Array<{ checkoutId: string; courseId: string; studentName: string; studentEmail: string; status: string; createdAt: string }>;
+};
+
 const shellCard = 'rounded-3xl border border-white/10 bg-white/[0.05] backdrop-blur-xl';
 
 export default function AdminDashboard() {
@@ -34,6 +40,7 @@ export default function AdminDashboard() {
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState('');
   const [auditLog, setAuditLog] = useState<AuditItem[]>([]);
+  const [cursosOverview, setCursosOverview] = useState<CursosOverview | null>(null);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'withLink' | 'withoutLink'>('all');
   const [auditAdminFilter, setAuditAdminFilter] = useState('all');
@@ -72,16 +79,23 @@ export default function AdminDashboard() {
   const loadData = async (track = true) => {
     setLoadingOverview(true);
     try {
-      const [podcastRes, overviewRes] = await Promise.all([fetch('/api/prototype/podcast'), fetch('/api/admin/overview')]);
+      const [podcastRes, overviewRes, cursosRes] = await Promise.all([
+        fetch('/api/prototype/podcast'),
+        fetch('/api/admin/overview'),
+        fetch('/api/admin/cursos/overview?limit=12'),
+      ]);
       const podcastData = await podcastRes.json();
       const overviewData = await overviewRes.json();
+      const cursosData = await cursosRes.json();
 
       setEpisodes(podcastData?.episodes || []);
       setOverview(overviewData?.ok ? overviewData : null);
+      setCursosOverview(cursosData?.ok ? cursosData : null);
       if (track) await recordAudit('Atualização manual do dashboard', 'ok');
     } catch {
       setEpisodes([]);
       setOverview(null);
+      setCursosOverview(null);
       if (track) await recordAudit('Falha ao atualizar dashboard', 'warn');
     } finally {
       await loadAudit();
@@ -349,6 +363,58 @@ export default function AdminDashboard() {
               )}
             </article>
           ))}
+        </section>
+
+        <section className={`${shellCard} mt-6 p-6`}>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 className="text-xl font-bold">Vendas e matrículas (Cursos)</h3>
+              <p className="text-slate-300">Receita operacional e últimas matrículas em tempo real.</p>
+            </div>
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-3">
+            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+              <p className="text-xs uppercase tracking-[0.15em] text-slate-300">Total de checkouts</p>
+              <p className="text-2xl font-black text-cyan-200">{cursosOverview?.totals.totalCheckouts ?? 0}</p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+              <p className="text-xs uppercase tracking-[0.15em] text-slate-300">Pagos</p>
+              <p className="text-2xl font-black text-emerald-200">{cursosOverview?.totals.paidCheckouts ?? 0}</p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+              <p className="text-xs uppercase tracking-[0.15em] text-slate-300">Pendentes</p>
+              <p className="text-2xl font-black text-amber-200">{cursosOverview?.totals.pendingCheckouts ?? 0}</p>
+            </div>
+          </div>
+
+          <div className="mt-4 grid gap-4 lg:grid-cols-2">
+            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+              <p className="mb-2 text-sm font-semibold">Top cursos por matrícula</p>
+              <div className="space-y-2 text-sm">
+                {(cursosOverview?.byCourse || []).map((c) => (
+                  <div key={c.courseId} className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-3 py-2">
+                    <span>{c.courseId}</span>
+                    <span className="font-semibold text-cyan-200">{c.enrollments}</span>
+                  </div>
+                ))}
+                {(cursosOverview?.byCourse || []).length === 0 && <p className="text-slate-300">Sem dados ainda.</p>}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+              <p className="mb-2 text-sm font-semibold">Últimas matrículas</p>
+              <div className="space-y-2 text-sm">
+                {(cursosOverview?.recentEnrollments || []).map((enr) => (
+                  <div key={enr.checkoutId} className="rounded-lg border border-white/10 bg-white/5 px-3 py-2">
+                    <p className="font-semibold">{enr.studentName} • {enr.courseId}</p>
+                    <p className="text-xs text-slate-300">{enr.studentEmail} • {new Date(enr.createdAt).toLocaleString('pt-BR')}</p>
+                  </div>
+                ))}
+                {(cursosOverview?.recentEnrollments || []).length === 0 && <p className="text-slate-300">Sem matrículas recentes.</p>}
+              </div>
+            </div>
+          </div>
         </section>
 
         <section className={`${shellCard} mt-6 p-6`}>

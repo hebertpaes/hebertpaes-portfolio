@@ -166,3 +166,61 @@ export async function hasEnrollmentForCourse(emailRaw: string, courseIdRaw: stri
 
   return result.recordset.length > 0;
 }
+
+export async function getCursosAdminOverview(limit = 20) {
+  await ensureTables();
+  const pool = await getSqlPool();
+
+  const [totalsRes, byCourseRes, recentRes] = await Promise.all([
+    pool.request().query(`
+      SELECT
+        COUNT(*) AS totalCheckouts,
+        SUM(CASE WHEN status = 'paid' THEN 1 ELSE 0 END) AS paidCheckouts,
+        SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) AS pendingCheckouts
+      FROM dbo.course_checkouts
+    `),
+    pool.request().query(`
+      SELECT TOP 10
+        course_id AS courseId,
+        COUNT(*) AS enrollments
+      FROM dbo.course_enrollments
+      WHERE status = 'active'
+      GROUP BY course_id
+      ORDER BY COUNT(*) DESC
+    `),
+    pool.request().input("limit", sql.Int, limit).query(`
+      SELECT TOP (@limit)
+        checkout_id AS checkoutId,
+        course_id AS courseId,
+        student_name AS studentName,
+        student_email AS studentEmail,
+        status,
+        created_at AS createdAt
+      FROM dbo.course_enrollments
+      ORDER BY created_at DESC
+    `),
+  ]);
+
+  const totals = (totalsRes.recordset[0] || {}) as {
+    totalCheckouts?: number;
+    paidCheckouts?: number;
+    pendingCheckouts?: number;
+  };
+
+  return {
+    totals: {
+      totalCheckouts: Number(totals.totalCheckouts || 0),
+      paidCheckouts: Number(totals.paidCheckouts || 0),
+      pendingCheckouts: Number(totals.pendingCheckouts || 0),
+    },
+    byCourse: byCourseRes.recordset as Array<{ courseId: string; enrollments: number }>,
+    recentEnrollments: recentRes.recordset as Array<{
+      checkoutId: string;
+      courseId: string;
+      studentName: string;
+      studentEmail: string;
+      status: string;
+      createdAt: string;
+    }>,
+  };
+}

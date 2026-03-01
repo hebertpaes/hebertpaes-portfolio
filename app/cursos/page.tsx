@@ -1,67 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-
-type Course = {
-  id: string;
-  title: string;
-  creator: string;
-  level: "Iniciante" | "Intermediário" | "Avançado";
-  duration: string;
-  students: string;
-  price: string;
-  category: string;
-  accent: string;
-};
+import { courses } from "@/lib/cursos-data";
 
 const categories = ["Todos", "Negócios", "Marketing", "IA", "Vendas", "Conteúdo", "Tráfego"];
-
-const courses: Course[] = [
-  {
-    id: "c1",
-    title: "Máquina de Vendas com IA",
-    creator: "Hebert Paes",
-    level: "Intermediário",
-    duration: "12h 40m",
-    students: "2.9k alunos",
-    price: "R$ 697",
-    category: "IA",
-    accent: "from-cyan-400/80 to-blue-500/80",
-  },
-  {
-    id: "c2",
-    title: "Conteúdo Magnético para Redes",
-    creator: "Hebert Paes",
-    level: "Iniciante",
-    duration: "8h 10m",
-    students: "4.2k alunos",
-    price: "R$ 397",
-    category: "Conteúdo",
-    accent: "from-fuchsia-400/80 to-violet-500/80",
-  },
-  {
-    id: "c3",
-    title: "Tráfego Pago de Alta Conversão",
-    creator: "Time HP Academy",
-    level: "Avançado",
-    duration: "16h 20m",
-    students: "1.6k alunos",
-    price: "R$ 997",
-    category: "Tráfego",
-    accent: "from-amber-300/80 to-orange-500/80",
-  },
-  {
-    id: "c4",
-    title: "Escala de Negócios Digitais",
-    creator: "Hebert Paes",
-    level: "Intermediário",
-    duration: "10h 05m",
-    students: "1.2k alunos",
-    price: "R$ 597",
-    category: "Negócios",
-    accent: "from-emerald-300/80 to-teal-500/80",
-  },
-];
 
 const features = [
   "Área de membros com streaming em qualidade adaptativa",
@@ -198,9 +140,9 @@ export default function CursosPage() {
                   </div>
                   <div className="mt-4 flex items-center justify-between">
                     <p className="text-xl font-black text-cyan-200">{course.price}</p>
-                    <button className="rounded-xl border border-white/20 bg-white/10 px-3 py-1.5 text-sm font-semibold hover:bg-white/15">
+                    <a href={`/cursos/${course.id}`} className="rounded-xl border border-white/20 bg-white/10 px-3 py-1.5 text-sm font-semibold hover:bg-white/15">
                       Ver curso
-                    </button>
+                    </a>
                   </div>
                 </div>
               </article>

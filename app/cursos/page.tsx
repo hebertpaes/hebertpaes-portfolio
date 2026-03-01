@@ -24,7 +24,7 @@ const plans = [
     highlight: false,
   },
   {
-    name: "Pro Streaming",
+    name: "Pro Scale",
     price: "R$ 297/mês + 4,9%",
     subtitle: "Para escala com equipe",
     items: ["Produtos ilimitados", "Afiliados", "Automação de funis", "Analytics avançado"],
@@ -76,7 +76,7 @@ export default function CursosPage() {
               <h1 className="text-5xl font-black leading-[0.95] md:text-7xl">
                 Portal SaaS de cursos
                 <span className="block bg-gradient-to-r from-cyan-200 via-sky-300 to-violet-300 bg-clip-text text-transparent">
-                  estilo Netflix + Prime + Disney
+                  experiência premium de plataforma de vídeo
                 </span>
               </h1>
               <p className="mt-6 max-w-3xl text-base text-slate-300 md:text-xl">
@@ -169,7 +169,7 @@ export default function CursosPage() {
 
       <section id="recursos" className="relative px-4 py-14">
         <div className="mx-auto max-w-7xl rounded-3xl border border-white/15 bg-white/[0.04] p-8 backdrop-blur-xl">
-          <h2 className="text-3xl font-bold">Recursos de vendas e monetização (estilo Hotmart)</h2>
+          <h2 className="text-3xl font-bold">Recursos de vendas e monetização para infoprodutos</h2>
           <p className="mt-2 max-w-3xl text-slate-300">
             Estrutura completa para creators, experts e equipes comerciais venderem cursos, mentorias e assinaturas com
             controle total da operação.

@@ -86,6 +86,13 @@ export default function AdminLoginPage() {
           {loading ? "Entrando..." : "Entrar no Admin"}
         </button>
 
+        <a
+          href="/api/openclaw/auth?provider=github&action=start&next=%2Fadmin%2F2fa"
+          className="mt-4 inline-flex w-full items-center justify-center rounded-xl border border-white/20 bg-black/40 px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-black/55"
+        >
+          Entrar com GitHub + 2FA (sem senha local)
+        </a>
+
         <a href="/login" className="mt-4 inline-block text-sm text-cyan-200 hover:text-cyan-100">
           Voltar para login geral
         </a>

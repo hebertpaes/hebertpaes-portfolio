@@ -31,6 +31,21 @@ type CursosOverview = {
   recentEnrollments: Array<{ checkoutId: string; courseId: string; studentName: string; studentEmail: string; status: string; createdAt: string }>;
 };
 
+type MarketplaceOverview = {
+  totals: { totalOrders: number; pendingOrders: number; paidOrders: number };
+  topItems: Array<{ itemId: string; orders: number }>;
+};
+
+type MarketplaceItem = {
+  id: string;
+  type: "produto" | "servico";
+  title: string;
+  description: string;
+  priceLabel: string;
+  category: string;
+  active: boolean;
+};
+
 const shellCard = 'rounded-3xl border border-white/10 bg-white/[0.05] backdrop-blur-xl';
 
 export default function AdminDashboard() {
@@ -41,6 +56,9 @@ export default function AdminDashboard() {
   const [notice, setNotice] = useState('');
   const [auditLog, setAuditLog] = useState<AuditItem[]>([]);
   const [cursosOverview, setCursosOverview] = useState<CursosOverview | null>(null);
+  const [marketplaceOverview, setMarketplaceOverview] = useState<MarketplaceOverview | null>(null);
+  const [marketplaceItems, setMarketplaceItems] = useState<MarketplaceItem[]>([]);
+  const [mkForm, setMkForm] = useState({ type: "produto", title: "", description: "", priceLabel: "", category: "" });
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'withLink' | 'withoutLink'>('all');
   const [auditAdminFilter, setAuditAdminFilter] = useState('all');
@@ -79,23 +97,31 @@ export default function AdminDashboard() {
   const loadData = async (track = true) => {
     setLoadingOverview(true);
     try {
-      const [podcastRes, overviewRes, cursosRes] = await Promise.all([
+      const [podcastRes, overviewRes, cursosRes, mkOverviewRes, mkItemsRes] = await Promise.all([
         fetch('/api/prototype/podcast'),
         fetch('/api/admin/overview'),
         fetch('/api/admin/cursos/overview?limit=12'),
+        fetch('/api/admin/marketplace/overview'),
+        fetch('/api/admin/marketplace/items'),
       ]);
       const podcastData = await podcastRes.json();
       const overviewData = await overviewRes.json();
       const cursosData = await cursosRes.json();
+      const mkOverviewData = await mkOverviewRes.json();
+      const mkItemsData = await mkItemsRes.json();
 
       setEpisodes(podcastData?.episodes || []);
       setOverview(overviewData?.ok ? overviewData : null);
       setCursosOverview(cursosData?.ok ? cursosData : null);
+      setMarketplaceOverview(mkOverviewData?.ok ? mkOverviewData : null);
+      setMarketplaceItems(mkItemsData?.ok ? mkItemsData.items || [] : []);
       if (track) await recordAudit('Atualização manual do dashboard', 'ok');
     } catch {
       setEpisodes([]);
       setOverview(null);
       setCursosOverview(null);
+      setMarketplaceOverview(null);
+      setMarketplaceItems([]);
       if (track) await recordAudit('Falha ao atualizar dashboard', 'warn');
     } finally {
       await loadAudit();
@@ -148,6 +174,35 @@ export default function AdminDashboard() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const addMarketplaceItem = async () => {
+    const res = await fetch('/api/admin/marketplace/items', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(mkForm),
+    });
+    const data = await res.json();
+    if (data?.ok) {
+      setMkForm({ type: 'produto', title: '', description: '', priceLabel: '', category: '' });
+      await recordAudit('Novo item marketplace criado', 'ok', data.item?.id || '');
+      await loadData(false);
+    }
+  };
+
+  const toggleMarketplaceItem = async (id: string, active: boolean) => {
+    await fetch('/api/admin/marketplace/items', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, active: !active }),
+    });
+    await loadData(false);
+  };
+
+  const removeMarketplaceItem = async (id: string) => {
+    await fetch(`/api/admin/marketplace/items?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+    await recordAudit('Item marketplace removido', 'warn', id);
+    await loadData(false);
   };
 
   const statusCards = useMemo(
@@ -414,6 +469,51 @@ export default function AdminDashboard() {
                 {(cursosOverview?.recentEnrollments || []).length === 0 && <p className="text-slate-300">Sem matrículas recentes.</p>}
               </div>
             </div>
+          </div>
+        </section>
+
+        <section className={`${shellCard} mt-6 p-6`}>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 className="text-xl font-bold">Marketplace (Produtos & Serviços)</h3>
+              <p className="text-slate-300">Gestão de catálogo e funil de pedidos.</p>
+            </div>
+            <div className="flex gap-2 text-sm">
+              <span className="rounded-full border border-white/20 px-3 py-1">Total pedidos: {marketplaceOverview?.totals.totalOrders ?? 0}</span>
+              <span className="rounded-full border border-emerald-300/30 px-3 py-1 text-emerald-200">Pagos: {marketplaceOverview?.totals.paidOrders ?? 0}</span>
+              <span className="rounded-full border border-amber-300/30 px-3 py-1 text-amber-200">Pendentes: {marketplaceOverview?.totals.pendingOrders ?? 0}</span>
+            </div>
+          </div>
+
+          <div className="mb-4 grid gap-2 md:grid-cols-5">
+            <select
+              value={mkForm.type}
+              onChange={(e) => setMkForm((p) => ({ ...p, type: e.target.value }))}
+              className="rounded-xl border border-white/20 bg-[#0b1222] px-3 py-2 text-white"
+            >
+              <option value="produto">Produto</option>
+              <option value="servico">Serviço</option>
+            </select>
+            <input value={mkForm.title} onChange={(e) => setMkForm((p) => ({ ...p, title: e.target.value }))} placeholder="Título" className="rounded-xl border border-white/20 bg-white/10 px-3 py-2" />
+            <input value={mkForm.category} onChange={(e) => setMkForm((p) => ({ ...p, category: e.target.value }))} placeholder="Categoria" className="rounded-xl border border-white/20 bg-white/10 px-3 py-2" />
+            <input value={mkForm.priceLabel} onChange={(e) => setMkForm((p) => ({ ...p, priceLabel: e.target.value }))} placeholder="Preço (ex: R$ 297)" className="rounded-xl border border-white/20 bg-white/10 px-3 py-2" />
+            <button onClick={addMarketplaceItem} className="rounded-xl border border-white/20 bg-cyan-500 px-3 py-2 font-semibold text-slate-950 hover:bg-cyan-400">Adicionar item</button>
+          </div>
+          <textarea value={mkForm.description} onChange={(e) => setMkForm((p) => ({ ...p, description: e.target.value }))} placeholder="Descrição do item" className="mb-4 min-h-[70px] w-full rounded-xl border border-white/20 bg-white/10 px-3 py-2" />
+
+          <div className="space-y-2">
+            {marketplaceItems.map((item) => (
+              <div key={item.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-white/10 bg-black/20 px-3 py-2">
+                <div>
+                  <p className="font-semibold">{item.title} <span className="text-xs text-slate-300">({item.type})</span></p>
+                  <p className="text-xs text-slate-300">{item.category} • {item.priceLabel} • {item.id}</p>
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={() => toggleMarketplaceItem(item.id, item.active)} className="rounded-lg border border-white/20 px-3 py-1 text-sm hover:bg-white/10">{item.active ? 'Desativar' : 'Ativar'}</button>
+                  <button onClick={() => removeMarketplaceItem(item.id)} className="rounded-lg border border-rose-300/30 px-3 py-1 text-sm text-rose-200 hover:bg-rose-400/10">Excluir</button>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 

@@ -188,3 +188,113 @@ export async function createMarketplaceOrder(input: {
 
   return orderRef;
 }
+
+export async function listMarketplaceItemsAdmin() {
+  try {
+    await seedIfEmpty();
+    const pool = await getSqlPool();
+    const result = await pool.request().query(`
+      SELECT id, item_type AS type, title, description, price_label AS priceLabel, category, active
+      FROM dbo.marketplace_items
+      ORDER BY item_type ASC, title ASC
+    `);
+    return result.recordset as MarketplaceItem[];
+  } catch {
+    return getMemItems();
+  }
+}
+
+export async function createMarketplaceItem(input: Omit<MarketplaceItem, "id"> & { id?: string }) {
+  const item: MarketplaceItem = {
+    id: input.id || `mk_${crypto.randomUUID().slice(0, 12)}`,
+    type: input.type,
+    title: input.title,
+    description: input.description,
+    priceLabel: input.priceLabel,
+    category: input.category,
+    active: input.active,
+  };
+
+  try {
+    await ensureTables();
+    const pool = await getSqlPool();
+    await pool
+      .request()
+      .input("id", sql.NVarChar(64), item.id)
+      .input("type", sql.NVarChar(16), item.type)
+      .input("title", sql.NVarChar(255), item.title)
+      .input("description", sql.NVarChar(1500), item.description)
+      .input("price", sql.NVarChar(64), item.priceLabel)
+      .input("category", sql.NVarChar(128), item.category)
+      .input("active", sql.Bit, item.active ? 1 : 0)
+      .query(`
+        INSERT INTO dbo.marketplace_items (id, item_type, title, description, price_label, category, active)
+        VALUES (@id, @type, @title, @description, @price, @category, @active)
+      `);
+  } catch {
+    const items = getMemItems();
+    items.push(item);
+  }
+
+  return item;
+}
+
+export async function updateMarketplaceItemActive(id: string, active: boolean) {
+  try {
+    await ensureTables();
+    const pool = await getSqlPool();
+    await pool.request().input("id", sql.NVarChar(64), id).input("active", sql.Bit, active ? 1 : 0).query(`
+      UPDATE dbo.marketplace_items SET active = @active, updated_at = SYSUTCDATETIME() WHERE id = @id
+    `);
+  } catch {
+    const items = getMemItems();
+    const item = items.find((i) => i.id === id);
+    if (item) item.active = active;
+  }
+}
+
+export async function deleteMarketplaceItem(id: string) {
+  try {
+    await ensureTables();
+    const pool = await getSqlPool();
+    await pool.request().input("id", sql.NVarChar(64), id).query(`DELETE FROM dbo.marketplace_items WHERE id = @id`);
+  } catch {
+    const items = getMemItems();
+    const idx = items.findIndex((i) => i.id === id);
+    if (idx >= 0) items.splice(idx, 1);
+  }
+}
+
+export async function getMarketplaceAdminOverview() {
+  try {
+    await ensureTables();
+    const pool = await getSqlPool();
+    const [totalsRes, funnelRes] = await Promise.all([
+      pool.request().query(`
+        SELECT
+          COUNT(*) AS totalOrders,
+          SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) AS pendingOrders,
+          SUM(CASE WHEN status = 'paid' THEN 1 ELSE 0 END) AS paidOrders
+        FROM dbo.marketplace_orders
+      `),
+      pool.request().query(`
+        SELECT TOP 8 item_id AS itemId, COUNT(*) AS orders
+        FROM dbo.marketplace_orders
+        GROUP BY item_id
+        ORDER BY COUNT(*) DESC
+      `),
+    ]);
+
+    const t = (totalsRes.recordset[0] || {}) as { totalOrders?: number; pendingOrders?: number; paidOrders?: number };
+    return {
+      totals: {
+        totalOrders: Number(t.totalOrders || 0),
+        pendingOrders: Number(t.pendingOrders || 0),
+        paidOrders: Number(t.paidOrders || 0),
+      },
+      topItems: funnelRes.recordset as Array<{ itemId: string; orders: number }>,
+    };
+  } catch {
+    return { totals: { totalOrders: 0, pendingOrders: 0, paidOrders: 0 }, topItems: [] as Array<{ itemId: string; orders: number }> };
+  }
+}

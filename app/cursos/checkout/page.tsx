@@ -29,11 +29,12 @@ export default function CursosCheckoutPage() {
       });
       const data = await res.json();
       if (!res.ok || !data.ok) {
-        setMessage("Falha ao iniciar checkout.");
+        setMessage(data?.message || "Falha ao iniciar checkout.");
         return;
       }
 
-      setMessage(`Checkout criado: ${data.checkoutId}. Link de pagamento: ${data.paymentUrl}`);
+      setMessage("Redirecionando para o pagamento...");
+      window.location.href = data.paymentUrl;
     } catch {
       setMessage("Erro de conexão no checkout.");
     } finally {
@@ -69,7 +70,7 @@ export default function CursosCheckoutPage() {
             disabled={loading}
             className="w-full rounded-xl border border-white/20 bg-cyan-500 px-4 py-3 font-bold text-slate-950 hover:bg-cyan-400 disabled:opacity-60"
           >
-            {loading ? "Processando..." : "Pagar agora"}
+            {loading ? "Processando..." : "Ir para pagamento"}
           </button>
         </form>
 

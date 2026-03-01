@@ -36,6 +36,10 @@ export default function AdminDashboard() {
   const [auditLog, setAuditLog] = useState<AuditItem[]>([]);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'withLink' | 'withoutLink'>('all');
+  const [auditAdminFilter, setAuditAdminFilter] = useState('all');
+  const [auditStatusFilter, setAuditStatusFilter] = useState<'all' | 'ok' | 'warn'>('all');
+  const [auditFrom, setAuditFrom] = useState('');
+  const [auditTo, setAuditTo] = useState('');
 
   const recordAudit = async (action: string, status: 'ok' | 'warn' = 'ok', context = '') => {
     try {
@@ -51,7 +55,13 @@ export default function AdminDashboard() {
 
   const loadAudit = async () => {
     try {
-      const res = await fetch('/api/admin/audit?limit=25');
+      const params = new URLSearchParams({ limit: '50' });
+      if (auditAdminFilter !== 'all') params.set('admin', auditAdminFilter);
+      if (auditStatusFilter !== 'all') params.set('status', auditStatusFilter);
+      if (auditFrom) params.set('from', new Date(`${auditFrom}T00:00:00`).toISOString());
+      if (auditTo) params.set('to', new Date(`${auditTo}T23:59:59`).toISOString());
+
+      const res = await fetch(`/api/admin/audit?${params.toString()}`);
       const data = await res.json();
       setAuditLog(data?.items || []);
     } catch {
@@ -85,6 +95,10 @@ export default function AdminDashboard() {
       await Promise.all([loadData(false), loadAudit()]);
     })();
   }, []);
+
+  useEffect(() => {
+    loadAudit();
+  }, [auditAdminFilter, auditStatusFilter, auditFrom, auditTo]);
 
   const handleLogout = async () => {
     await recordAudit('Logout do painel admin', 'ok');
@@ -174,6 +188,37 @@ export default function AdminDashboard() {
     });
   }, [episodes, search, filter]);
 
+  const auditAdmins = useMemo(() => {
+    const unique = new Set(auditLog.map((item) => item.adminLogin || 'admin'));
+    return Array.from(unique).sort((a, b) => a.localeCompare(b));
+  }, [auditLog]);
+
+  const warnCount = useMemo(() => auditLog.filter((item) => item.status === 'warn').length, [auditLog]);
+
+  const exportAuditCsv = () => {
+    const rows = [
+      ['createdAt', 'adminLogin', 'action', 'context', 'status'],
+      ...auditLog.map((item) => [
+        item.createdAt,
+        item.adminLogin || 'admin',
+        item.action,
+        item.context || '',
+        item.status,
+      ]),
+    ];
+
+    const csv = rows
+      .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+      .join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `admin-audit-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  };
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#030712] text-white">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,rgba(34,211,238,0.16),transparent_35%),radial-gradient(circle_at_88%_6%,rgba(168,85,247,0.14),transparent_34%),radial-gradient(circle_at_50%_100%,rgba(59,130,246,0.12),transparent_30%)]" />
@@ -212,6 +257,14 @@ export default function AdminDashboard() {
             {loadingOverview ? 'Atualizando...' : 'Atualizar status'}
           </button>
         </div>
+
+        {warnCount > 0 && (
+          <section className="mb-4 rounded-2xl border border-amber-300/30 bg-amber-400/10 p-4">
+            <p className="text-sm font-semibold text-amber-200">
+              Alerta: {warnCount} evento(s) com status warn na auditoria. Revise os registros abaixo.
+            </p>
+          </section>
+        )}
 
         <section className="grid gap-4 md:grid-cols-3">
           {metrics.map((m) => {
@@ -319,17 +372,64 @@ export default function AdminDashboard() {
         </section>
 
         <section className={`${shellCard} mt-6 p-6`}>
-          <div className="mb-4 flex items-center justify-between gap-2">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
             <div>
               <h3 className="text-xl font-bold">Auditoria real (SQL)</h3>
               <p className="mt-1 text-slate-300">Últimas ações administrativas persistidas no banco.</p>
             </div>
-            <button
-              onClick={loadAudit}
-              className="rounded-xl border border-white/20 px-3 py-1.5 text-sm font-semibold text-cyan-100 hover:bg-white/10"
+            <div className="flex items-center gap-2">
+              <button
+                onClick={exportAuditCsv}
+                className="rounded-xl border border-white/20 px-3 py-1.5 text-sm font-semibold text-emerald-100 hover:bg-white/10"
+              >
+                Exportar CSV
+              </button>
+              <button
+                onClick={loadAudit}
+                className="rounded-xl border border-white/20 px-3 py-1.5 text-sm font-semibold text-cyan-100 hover:bg-white/10"
+              >
+                Atualizar auditoria
+              </button>
+            </div>
+          </div>
+
+          <div className="mb-4 grid gap-2 md:grid-cols-4">
+            <select
+              value={auditAdminFilter}
+              onChange={(e) => setAuditAdminFilter(e.target.value)}
+              className="rounded-xl border border-white/20 bg-[#0b1222] px-3 py-2 text-white outline-none"
             >
-              Atualizar auditoria
-            </button>
+              <option value="all">Todos os admins</option>
+              {auditAdmins.map((admin) => (
+                <option key={admin} value={admin}>
+                  {admin}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={auditStatusFilter}
+              onChange={(e) => setAuditStatusFilter(e.target.value as 'all' | 'ok' | 'warn')}
+              className="rounded-xl border border-white/20 bg-[#0b1222] px-3 py-2 text-white outline-none"
+            >
+              <option value="all">Todos os status</option>
+              <option value="ok">Somente ok</option>
+              <option value="warn">Somente warn</option>
+            </select>
+
+            <input
+              type="date"
+              value={auditFrom}
+              onChange={(e) => setAuditFrom(e.target.value)}
+              className="rounded-xl border border-white/20 bg-[#0b1222] px-3 py-2 text-white outline-none"
+            />
+
+            <input
+              type="date"
+              value={auditTo}
+              onChange={(e) => setAuditTo(e.target.value)}
+              className="rounded-xl border border-white/20 bg-[#0b1222] px-3 py-2 text-white outline-none"
+            />
           </div>
 
           <div className="overflow-x-auto">

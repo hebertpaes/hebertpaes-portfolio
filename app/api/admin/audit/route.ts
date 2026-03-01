@@ -37,12 +37,42 @@ export async function GET(req: NextRequest) {
   }
 
   const limitParam = Number(req.nextUrl.searchParams.get("limit") || "20");
-  const limit = Number.isFinite(limitParam) ? Math.max(1, Math.min(limitParam, 100)) : 20;
+  const limit = Number.isFinite(limitParam) ? Math.max(1, Math.min(limitParam, 200)) : 20;
+  const admin = (req.nextUrl.searchParams.get("admin") || "").trim();
+  const status = (req.nextUrl.searchParams.get("status") || "").trim();
+  const from = (req.nextUrl.searchParams.get("from") || "").trim();
+  const to = (req.nextUrl.searchParams.get("to") || "").trim();
 
   try {
     await ensureAuditTable();
     const pool = await getSqlPool();
-    const result = await pool.request().input("limit", sql.Int, limit).query(`
+    const request = pool.request().input("limit", sql.Int, limit);
+
+    const filters: string[] = [];
+
+    if (admin) {
+      request.input("admin", sql.NVarChar(255), admin);
+      filters.push("admin_login = @admin");
+    }
+
+    if (status === "ok" || status === "warn") {
+      request.input("status", sql.NVarChar(16), status);
+      filters.push("status = @status");
+    }
+
+    if (from) {
+      request.input("from", sql.DateTime2, new Date(from));
+      filters.push("created_at >= @from");
+    }
+
+    if (to) {
+      request.input("to", sql.DateTime2, new Date(to));
+      filters.push("created_at <= @to");
+    }
+
+    const whereClause = filters.length ? `WHERE ${filters.join(" AND ")}` : "";
+
+    const result = await request.query(`
       SELECT TOP (@limit)
         id,
         admin_login AS adminLogin,
@@ -51,6 +81,7 @@ export async function GET(req: NextRequest) {
         context,
         created_at AS createdAt
       FROM dbo.admin_audit_log
+      ${whereClause}
       ORDER BY created_at DESC
     `);
 

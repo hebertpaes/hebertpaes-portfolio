@@ -29,6 +29,27 @@ const metrics = [
   { value: "100%", label: "Interface otimizada para mobile" },
 ];
 
+const ecosystem = [
+  {
+    title: "Portal de Cursos",
+    description: "Player, checkout, matrícula automática e área do aluno em produção.",
+    href: "/cursos",
+    cta: "Abrir cursos",
+  },
+  {
+    title: "Marketplace",
+    description: "Produtos e serviços no mesmo catálogo com fluxo completo de pedidos.",
+    href: "/marketplace",
+    cta: "Abrir marketplace",
+  },
+  {
+    title: "Admin Pro",
+    description: "Gestão de cursos, marketplace, auditoria, funil e métricas em tempo real.",
+    href: "/admin/dashboard",
+    cta: "Abrir admin",
+  },
+];
+
 const animatedWords = ["Design", "inovador"];
 
 export default function Home() {
@@ -144,11 +165,11 @@ export default function Home() {
               <a href="/podcast" className={`${ctaClass} ${themeClasses.ctaPrimary}`}>
                 Ver Podcast
               </a>
-              <a href="#chat" className={`${ctaClass} ${themeClasses.ctaChat}`}>
-                Abrir Chat Jabes
+              <a href="/cursos" className={`${ctaClass} ${themeClasses.ctaChat}`}>
+                Abrir Cursos
               </a>
-              <a href="#loja" className={`${ctaClass} ${themeClasses.ctaShop}`}>
-                Loja em reformulação
+              <a href="/marketplace" className={`${ctaClass} ${themeClasses.ctaShop}`}>
+                Abrir Marketplace
               </a>
             </div>
           </div>
@@ -186,13 +207,28 @@ export default function Home() {
       </section>
 
       <section data-reveal id="loja" className="reveal relative px-4 py-16">
-        <div className="mx-auto max-w-5xl rounded-3xl border border-amber-200/25 bg-gradient-to-r from-amber-400/10 to-orange-500/10 p-8 shadow-[0_25px_90px_rgba(251,191,36,0.14)] backdrop-blur-xl md:p-10">
-          <p className="text-xs uppercase tracking-[0.25em] text-amber-200">Loja virtual</p>
-          <h2 className="mt-3 text-3xl font-black md:text-4xl">Loja em reformulação criativa</h2>
-          <p className="mt-3 text-amber-50/90">
-            Como solicitado, sem imagens e sem produtos no momento. O novo conceito da loja está sendo preparado para
-            uma volta com mais personalidade e conversão.
-          </p>
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-5 flex items-end justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-[0.25em] text-amber-200">Ecossistema oficial</p>
+              <h2 className="mt-2 text-3xl font-black md:text-4xl">Tudo integrado em um único sistema</h2>
+            </div>
+            <a href="/admin/dashboard" className={`${ctaClass} ${themeClasses.ctaPrimary} hidden md:inline-flex`}>
+              Ver painel completo
+            </a>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            {ecosystem.map((item) => (
+              <article key={item.title} className={`rounded-3xl border p-6 backdrop-blur-xl ${themeClasses.card}`}>
+                <h3 className="text-xl font-bold">{item.title}</h3>
+                <p className={`mt-2 text-sm ${themeClasses.softText}`}>{item.description}</p>
+                <a href={item.href} className="mt-5 inline-flex rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold hover:bg-white/15">
+                  {item.cta}
+                </a>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 

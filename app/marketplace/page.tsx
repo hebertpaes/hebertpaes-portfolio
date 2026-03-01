@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import AIGuideWidget from "@/app/components/ai-guide-widget";
 
 type Item = {
   id: string;
@@ -9,6 +10,13 @@ type Item = {
   description: string;
   priceLabel: string;
   category: string;
+};
+
+const imageByItemId: Record<string, string> = {
+  p1: "/illustrations/mk-p1.svg",
+  p2: "/illustrations/mk-p2.svg",
+  s1: "/illustrations/mk-s1.svg",
+  s2: "/illustrations/mk-s2.svg",
 };
 
 export default function MarketplacePage() {
@@ -72,6 +80,7 @@ export default function MarketplacePage() {
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {items.map((item) => (
             <article key={item.id} className="rounded-3xl border border-white/10 bg-white/[0.05] p-5 backdrop-blur-xl">
+              <img src={imageByItemId[item.id] || "/illustrations/mk-p1.svg"} alt={item.title} className="mb-3 h-36 w-full rounded-2xl object-cover" loading="lazy" />
               <p className="text-xs uppercase tracking-[0.2em] text-slate-300">{item.type} • {item.category}</p>
               <h2 className="mt-2 text-xl font-bold">{item.title}</h2>
               <p className="mt-2 text-sm text-slate-300">{item.description}</p>
@@ -84,6 +93,10 @@ export default function MarketplacePage() {
             </article>
           ))}
           {items.length === 0 && <p className="text-slate-300">Nenhum item encontrado.</p>}
+        </div>
+
+        <div className="mt-8">
+          <AIGuideWidget source="marketplace" />
         </div>
       </div>
     </main>

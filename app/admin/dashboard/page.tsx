@@ -522,7 +522,15 @@ export default function AdminDashboard() {
               <option value="servico">Serviço</option>
             </select>
             <input value={mkForm.title} onChange={(e) => setMkForm((p) => ({ ...p, title: e.target.value }))} placeholder="Título" className="rounded-xl border border-white/20 bg-white/10 px-3 py-2" />
-            <input value={mkForm.category} onChange={(e) => setMkForm((p) => ({ ...p, category: e.target.value }))} placeholder="Categoria" className="rounded-xl border border-white/20 bg-white/10 px-3 py-2" />
+            <select value={mkForm.category} onChange={(e) => setMkForm((p) => ({ ...p, category: e.target.value }))} className="rounded-xl border border-white/20 bg-[#0b1222] px-3 py-2 text-white">
+              <option value="">Categoria</option>
+              <option value="Negócios">Negócios</option>
+              <option value="Marketing">Marketing</option>
+              <option value="IA">IA</option>
+              <option value="Vendas">Vendas</option>
+              <option value="Conteúdo">Conteúdo</option>
+              <option value="Tráfego">Tráfego</option>
+            </select>
             <input value={mkForm.priceLabel} onChange={(e) => setMkForm((p) => ({ ...p, priceLabel: e.target.value }))} placeholder="Preço (ex: R$ 297)" className="rounded-xl border border-white/20 bg-white/10 px-3 py-2" />
             <button onClick={saveMarketplaceItem} className="rounded-xl border border-white/20 bg-cyan-500 px-3 py-2 font-semibold text-slate-950 hover:bg-cyan-400">{mkForm.id ? 'Salvar edição' : 'Adicionar item'}</button>
           </div>

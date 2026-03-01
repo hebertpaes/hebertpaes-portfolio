@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { courses } from "@/lib/cursos-data";
+import AIGuideWidget from "@/app/components/ai-guide-widget";
 
 const categories = ["Todos", "Negócios", "Marketing", "IA", "Vendas", "Conteúdo", "Tráfego"];
 
@@ -128,7 +129,7 @@ export default function CursosPage() {
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {filteredCourses.map((course) => (
               <article key={course.id} className="group overflow-hidden rounded-3xl border border-white/10 bg-white/[0.05] backdrop-blur-xl transition-all hover:-translate-y-1 hover:border-cyan-200/40">
-                <div className={`h-36 bg-gradient-to-br ${course.accent}`} />
+                <img src={course.imageUrl} alt={course.title} className="h-36 w-full object-cover" loading="lazy" />
                 <div className="p-4">
                   <p className="text-xs uppercase tracking-[0.15em] text-slate-300">{course.category}</p>
                   <h3 className="mt-2 text-lg font-bold leading-tight text-white group-hover:text-cyan-100">{course.title}</h3>
@@ -166,6 +167,12 @@ export default function CursosPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="relative px-4 pb-8">
+        <div className="mx-auto max-w-7xl">
+          <AIGuideWidget source="cursos" />
         </div>
       </section>
 

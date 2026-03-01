@@ -8,6 +8,7 @@ export type Course = {
   price: string;
   category: string;
   accent: string;
+  imageUrl: string;
 };
 
 export type CourseModule = {
@@ -27,6 +28,7 @@ export const courses: Course[] = [
     price: "R$ 697",
     category: "IA",
     accent: "from-cyan-400/80 to-blue-500/80",
+    imageUrl: "/illustrations/course-c1.svg",
   },
   {
     id: "c2",
@@ -38,6 +40,7 @@ export const courses: Course[] = [
     price: "R$ 397",
     category: "Conteúdo",
     accent: "from-fuchsia-400/80 to-violet-500/80",
+    imageUrl: "/illustrations/course-c2.svg",
   },
   {
     id: "c3",
@@ -49,6 +52,7 @@ export const courses: Course[] = [
     price: "R$ 997",
     category: "Tráfego",
     accent: "from-amber-300/80 to-orange-500/80",
+    imageUrl: "/illustrations/course-c3.svg",
   },
   {
     id: "c4",
@@ -60,6 +64,7 @@ export const courses: Course[] = [
     price: "R$ 597",
     category: "Negócios",
     accent: "from-emerald-300/80 to-teal-500/80",
+    imageUrl: "/illustrations/course-c4.svg",
   },
 ];
 

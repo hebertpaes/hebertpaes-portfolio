@@ -10,6 +10,8 @@ export type MarketplaceItem = {
   active: boolean;
 };
 
+const allowedCategories = ["Negócios", "Marketing", "IA", "Vendas", "Conteúdo", "Tráfego"] as const;
+
 const seedItems: MarketplaceItem[] = [
   {
     id: "p1",
@@ -35,7 +37,7 @@ const seedItems: MarketplaceItem[] = [
     title: "Mentoria Estratégica 1:1",
     description: "Sessão premium para posicionamento, oferta e escala de vendas.",
     priceLabel: "R$ 1.497",
-    category: "Mentoria",
+    category: "Negócios",
     active: true,
   },
   {
@@ -44,7 +46,7 @@ const seedItems: MarketplaceItem[] = [
     title: "Implantação de Funil Completo",
     description: "Configuração ponta a ponta: captação, nurture e fechamento.",
     priceLabel: "R$ 4.900",
-    category: "Implementação",
+    category: "Marketing",
     active: true,
   },
 ];
@@ -205,13 +207,17 @@ export async function listMarketplaceItemsAdmin() {
 }
 
 export async function createMarketplaceItem(input: Omit<MarketplaceItem, "id"> & { id?: string }) {
+  const category = allowedCategories.includes(input.category as (typeof allowedCategories)[number])
+    ? input.category
+    : "Negócios";
+
   const item: MarketplaceItem = {
     id: input.id || `mk_${crypto.randomUUID().slice(0, 12)}`,
     type: input.type,
     title: input.title,
     description: input.description,
     priceLabel: input.priceLabel,
-    category: input.category,
+    category,
     active: input.active,
   };
 
@@ -257,7 +263,7 @@ export async function updateMarketplaceItem(input: {
       .input("title", sql.NVarChar(255), input.title)
       .input("description", sql.NVarChar(1500), input.description)
       .input("price", sql.NVarChar(64), input.priceLabel)
-      .input("category", sql.NVarChar(128), input.category)
+      .input("category", sql.NVarChar(128), allowedCategories.includes(input.category as (typeof allowedCategories)[number]) ? input.category : "Negócios")
       .input("type", sql.NVarChar(16), input.type)
       .input("active", sql.Bit, input.active ? 1 : 0)
       .query(`

@@ -36,36 +36,36 @@ export default async function OpenClawAgentsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white px-4 py-16">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-start gap-4 flex-wrap mb-8">
-          <div>
-            <p className="uppercase tracking-[0.25em] text-cyan-300 text-xs mb-3">hebertpaes.com/openclaw/agents</p>
-            <h1 className="text-4xl md:text-5xl font-black mb-3">Agents Hub</h1>
-            <p className="text-slate-300 max-w-3xl">Olá, <strong>{session.login}</strong>. Painel autenticado com sessão segura.</p>
+    <main className="min-h-screen bg-slate-950 px-3 py-6 text-white sm:px-4 sm:py-10 md:py-16">
+      <div className="mx-auto w-full max-w-6xl">
+        <div className="mb-6 flex flex-wrap items-start justify-between gap-4 sm:mb-8">
+          <div className="min-w-0">
+            <p className="mb-2 text-[11px] uppercase tracking-[0.18em] text-cyan-300 sm:mb-3 sm:text-xs sm:tracking-[0.25em]">hebertpaes.com/openclaw/agents</p>
+            <h1 className="mb-2 text-3xl font-black leading-tight sm:mb-3 sm:text-4xl md:text-5xl">Agents Hub</h1>
+            <p className="max-w-3xl text-sm text-slate-300 sm:text-base">Olá, <strong>{session.login}</strong>. Painel autenticado com sessão segura.</p>
           </div>
-          <div className="flex gap-2">
-            <a href="/login" className="bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold px-5 py-3 rounded-xl">
+          <div className="grid w-full gap-2 sm:w-auto sm:grid-cols-2">
+            <a href="/login" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-cyan-400 px-4 py-2.5 text-sm font-bold text-slate-950 transition-all hover:bg-cyan-300 sm:px-5 sm:py-3 sm:text-base">
               Trocar usuário
             </a>
-            <a href="/api/auth/logout" className="bg-rose-400 hover:bg-rose-300 text-slate-950 font-bold px-5 py-3 rounded-xl">
+            <a href="/api/auth/logout" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-rose-400 px-4 py-2.5 text-sm font-bold text-slate-950 transition-all hover:bg-rose-300 sm:px-5 sm:py-3 sm:text-base">
               Sair
             </a>
           </div>
         </div>
 
-        <section className="grid md:grid-cols-3 gap-4 mb-10">
+        <section className="mb-8 grid gap-3 sm:gap-4 md:mb-10 md:grid-cols-2 xl:grid-cols-3">
           {agents.map((agent) => (
-            <article key={agent.name} className="bg-white/10 border border-white/15 rounded-2xl p-5">
-              <div className="flex items-center justify-between gap-3 mb-3">
-                <h2 className="text-xl font-bold">{agent.name}</h2>
-                <span className="text-xs px-2 py-1 rounded-full border border-emerald-300/60 text-emerald-200 bg-emerald-500/15">{agent.status}</span>
+            <article key={agent.name} className="rounded-2xl border border-white/15 bg-white/10 p-4 sm:p-5">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <h2 className="text-lg font-bold leading-tight sm:text-xl">{agent.name}</h2>
+                <span className="shrink-0 rounded-full border border-emerald-300/60 bg-emerald-500/15 px-2 py-1 text-[11px] text-emerald-200 sm:text-xs">{agent.status}</span>
               </div>
-              <p className="text-slate-300 text-sm mb-2">{agent.role}</p>
-              <p className="text-cyan-200 text-sm mb-4">Modelo: {agent.model}</p>
+              <p className="mb-2 text-sm text-slate-300">{agent.role}</p>
+              <p className="mb-4 text-sm text-cyan-200">Modelo: <span className="break-all">{agent.model}</span></p>
               <div className="flex flex-wrap gap-2">
                 {agent.capabilities.map((cap) => (
-                  <span key={cap} className="text-xs bg-slate-900/80 border border-slate-700 rounded-full px-2 py-1 text-slate-200">
+                  <span key={cap} className="rounded-full border border-slate-700 bg-slate-900/80 px-2 py-1 text-[11px] text-slate-200 sm:text-xs">
                     {cap}
                   </span>
                 ))}

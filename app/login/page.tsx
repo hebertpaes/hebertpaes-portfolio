@@ -28,36 +28,36 @@ export default function LoginPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white px-4 py-16">
-      <div className="max-w-xl mx-auto bg-white/10 border border-white/15 rounded-2xl p-8">
-        <h1 className="text-3xl font-black mb-3">Entrar com e-mail</h1>
-        <p className="text-slate-300 mb-3">Acesso da área OpenClaw em hebertpaes.com via provedores OAuth.</p>
-        {errorText && <p className="text-sm text-rose-300 mb-6">{errorText}</p>}
+    <main className="min-h-screen bg-slate-950 px-3 py-6 text-white sm:px-4 sm:py-10 md:py-16">
+      <div className="mx-auto w-full max-w-xl rounded-2xl border border-white/15 bg-white/10 p-4 sm:p-6 md:p-8">
+        <h1 className="mb-2 text-2xl font-black leading-tight sm:mb-3 sm:text-3xl">Entrar com e-mail</h1>
+        <p className="mb-3 text-sm text-slate-300 sm:text-base">Acesso da área OpenClaw em hebertpaes.com via provedores OAuth.</p>
+        {errorText && <p className="mb-4 text-sm text-rose-300 sm:mb-6">{errorText}</p>}
 
         <a
           href={githubUrl}
-          className="w-full inline-flex items-center justify-center bg-black hover:bg-neutral-900 border border-neutral-700 text-white font-semibold rounded-xl px-4 py-3.5 mb-4 shadow-sm hover:shadow-md active:scale-[0.99] transition-all"
+          className="mb-3 inline-flex min-h-12 w-full items-center justify-center gap-2.5 rounded-xl border border-neutral-700 bg-black px-4 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-neutral-900 hover:shadow-md active:scale-[0.99] sm:mb-4 sm:text-base"
         >
-          <img src="/icons/github.svg" alt="" className="w-5 h-5 mr-2.5" aria-hidden="true" />
-          Entrar (usuários existentes)
+          <img src="/icons/github.svg" alt="" className="h-5 w-5 shrink-0" aria-hidden="true" />
+          <span className="text-center">Entrar (usuários existentes)</span>
         </a>
 
-        <p className="text-xs text-slate-300 mb-3">Novos usuários: cadastro exclusivamente via Google API.</p>
+        <p className="mb-3 text-xs text-slate-300 sm:text-sm">Novos usuários: cadastro exclusivamente via Google API.</p>
 
-        <div className="grid sm:grid-cols-1 gap-3 mb-2">
+        <div className="mb-2 grid gap-3">
           {socialProviders.map((provider) => (
             <a
               key={provider.name}
               href={`/api/openclaw/auth?provider=${provider.key}&action=start${nextPath ? `&next=${encodeURIComponent(nextPath)}` : ""}`}
-              className={`inline-flex items-center justify-center font-semibold rounded-xl px-4 py-3.5 text-sm shadow-sm hover:shadow-md active:scale-[0.99] transition-all ${provider.className}`}
+              className={`inline-flex min-h-12 w-full items-center justify-center gap-2.5 rounded-xl px-4 py-3 text-sm font-semibold shadow-sm transition-all hover:shadow-md active:scale-[0.99] sm:text-base ${provider.className}`}
             >
-              <img src={provider.icon} alt="" className="w-5 h-5 mr-2.5" aria-hidden="true" />
-              <span className="truncate">Entrar com {provider.name}</span>
+              <img src={provider.icon} alt="" className="h-5 w-5 shrink-0" aria-hidden="true" />
+              <span className="text-center">Entrar com {provider.name}</span>
             </a>
           ))}
         </div>
 
-        <p className="mt-6 text-xs text-slate-400">Autenticação principal por provedores com e-mail.</p>
+        <p className="mt-5 text-xs text-slate-400 sm:mt-6">Autenticação principal por provedores com e-mail.</p>
       </div>
     </main>
   );

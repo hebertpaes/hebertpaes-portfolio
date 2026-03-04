@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 const ctaClass =
-  "inline-flex items-center justify-center rounded-2xl px-6 py-3 font-semibold transition-all duration-300 hover:-translate-y-0.5 shadow-[0_12px_30px_rgba(0,0,0,0.25)] border backdrop-blur-sm";
+  "inline-flex min-h-11 items-center justify-center rounded-2xl px-4 py-2.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 shadow-[0_12px_30px_rgba(0,0,0,0.25)] border backdrop-blur-sm sm:px-6 sm:py-3 sm:text-base";
 
 const experiencePillars = [
   {
@@ -131,24 +131,24 @@ export default function Home() {
       <div className="pointer-events-none absolute left-[-120px] top-[-80px] h-72 w-72 rounded-full bg-cyan-300/20 blur-3xl animate-pulse" />
       <div className="pointer-events-none absolute right-[-120px] top-20 h-80 w-80 rounded-full bg-violet-300/20 blur-3xl animate-pulse [animation-delay:600ms]" />
 
-      <section data-reveal className="reveal relative px-4 pt-24 pb-20">
+      <section data-reveal className="reveal relative px-3 pb-14 pt-16 sm:px-4 sm:pb-20 sm:pt-24">
         <div
           className="hero-parallax mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end"
           style={{ transform: "translate3d(var(--hero-x), var(--hero-y), 0)" }}
         >
           <div>
-            <p className="mb-4 inline-flex rounded-full border border-cyan-200/20 bg-cyan-200/10 px-4 py-1 text-xs uppercase tracking-[0.28em] text-cyan-200">
+            <p className="mb-4 inline-flex rounded-full border border-cyan-200/20 bg-cyan-200/10 px-3 py-1 text-[10px] uppercase tracking-[0.14em] text-cyan-200 sm:px-4 sm:text-xs sm:tracking-[0.28em]">
               Hebert Paes • Nova Experiência Digital
             </p>
-            <h1 className="text-5xl font-black leading-[0.95] md:text-7xl">
+            <h1 className="text-4xl font-black leading-[0.95] sm:text-5xl md:text-7xl">
               <span className="block" aria-label="Design inovador">
                 {animatedWords.map((word, index) => (
                   <span
                     key={word}
-                    className="hero-word inline-block"
+                    className="hero-word mr-2 inline-block sm:mr-3"
                     style={{ animationDelay: `${index * 120}ms` }}
                   >
-                    {word}&nbsp;
+                    {word}
                   </span>
                 ))}
               </span>
@@ -156,12 +156,12 @@ export default function Home() {
                 com presença de palco
               </span>
             </h1>
-            <p className={`mt-6 max-w-2xl text-base md:text-xl ${themeClasses.softText}`}>
+            <p className={`mt-5 max-w-2xl text-sm sm:text-base md:mt-6 md:text-xl ${themeClasses.softText}`}>
               Homepage recriada com linguagem visual premium, hierarquia clara e blocos interativos para transformar
               visita em ação.
             </p>
 
-            <div className="mt-9 flex flex-wrap gap-4">
+            <div className="mt-7 grid gap-3 sm:mt-9 sm:flex sm:flex-wrap sm:gap-4">
               <a href="/podcast" className={`${ctaClass} ${themeClasses.ctaPrimary}`}>
                 Ver Podcast
               </a>
@@ -174,9 +174,9 @@ export default function Home() {
             </div>
           </div>
 
-          <div className={`rounded-3xl border p-6 backdrop-blur-xl shadow-[0_30px_80px_rgba(0,0,0,0.35)] ${themeClasses.card}`}>
+          <div className={`rounded-3xl border p-4 backdrop-blur-xl shadow-[0_30px_80px_rgba(0,0,0,0.35)] sm:p-6 ${themeClasses.card}`}>
             <p className={`text-sm uppercase tracking-[0.2em] ${themeClasses.softText}`}>Impacto visual</p>
-            <div className="mt-5 grid grid-cols-3 gap-3">
+            <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3">
               {metrics.map((item) => (
                 <div key={item.label} className="rounded-2xl border border-white/10 bg-black/15 p-4 text-center dark:bg-black/20">
                   <p className="text-2xl font-black text-cyan-200 md:text-3xl">{item.value}</p>
@@ -191,7 +191,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section data-reveal className="reveal relative px-4 pb-12">
+      <section data-reveal className="reveal relative px-3 pb-12 sm:px-4">
         <div className="mx-auto grid max-w-6xl gap-5 md:grid-cols-3">
           {experiencePillars.map((pillar) => (
             <article
@@ -206,7 +206,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section data-reveal id="loja" className="reveal relative px-4 py-16">
+      <section data-reveal id="loja" className="reveal relative px-3 py-12 sm:px-4 sm:py-16">
         <div className="mx-auto max-w-6xl">
           <div className="mb-5 flex items-end justify-between gap-3">
             <div>
@@ -232,11 +232,11 @@ export default function Home() {
         </div>
       </section>
 
-      <section data-reveal id="chat" className="reveal relative px-4 py-16">
+      <section data-reveal id="chat" className="reveal relative px-3 py-12 sm:px-4 sm:py-16">
         <div className="mx-auto max-w-6xl">
           <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
-              <h2 className="text-4xl font-bold">Chat Jabes</h2>
+              <h2 className="text-3xl font-bold sm:text-4xl">Chat Jabes</h2>
               <p className={`mt-2 ${themeClasses.softText}`}>Atendimento direto com visual integrado ao novo design.</p>
             </div>
             <a href="/openclaw/chat" className={`${ctaClass} ${themeClasses.ctaChat}`}>
@@ -246,9 +246,9 @@ export default function Home() {
 
           <div className="overflow-hidden rounded-3xl border border-white/15 bg-black/25 shadow-[0_30px_80px_rgba(0,0,0,0.5)] backdrop-blur-xl">
             {loadEmbeddedChat ? (
-              <iframe src="/openclaw/chat" title="Chat Jabes" className="h-[760px] w-full bg-slate-950" loading="lazy" />
+              <iframe src="/openclaw/chat" title="Chat Jabes" className="h-[540px] w-full bg-slate-950 sm:h-[760px]" loading="lazy" />
             ) : (
-              <div className="flex h-[760px] flex-col items-center justify-center px-6 text-center">
+              <div className="flex h-[540px] flex-col items-center justify-center px-4 text-center sm:h-[760px] sm:px-6">
                 <p className={`max-w-lg text-base ${themeClasses.softText}`}>
                   Para priorizar velocidade inicial da página, o chat embutido é carregado sob demanda.
                 </p>
@@ -265,11 +265,11 @@ export default function Home() {
         </div>
       </section>
 
-      <section data-reveal id="contact" className="reveal relative px-4 py-16">
-        <div className={`mx-auto max-w-4xl rounded-3xl border p-10 text-center backdrop-blur-lg ${themeClasses.card}`}>
-          <h2 className="text-3xl font-bold">Contato & Parcerias</h2>
+      <section data-reveal id="contact" className="reveal relative px-3 py-12 sm:px-4 sm:py-16">
+        <div className={`mx-auto max-w-4xl rounded-3xl border p-6 text-center backdrop-blur-lg sm:p-10 ${themeClasses.card}`}>
+          <h2 className="text-2xl font-bold sm:text-3xl">Contato & Parcerias</h2>
           <p className={`mb-6 mt-3 ${themeClasses.softText}`}>Para shows, publis e projetos digitais, fale com a equipe.</p>
-          <a href="mailto:contato@hebertpaes.com" className={`text-xl transition-colors ${themeClasses.email}`}>
+          <a href="mailto:contato@hebertpaes.com" className={`text-base transition-colors sm:text-xl ${themeClasses.email}`}>
             contato@hebertpaes.com
           </a>
         </div>

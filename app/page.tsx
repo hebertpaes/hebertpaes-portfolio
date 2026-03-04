@@ -332,6 +332,14 @@ export default function Home() {
           transform: translateY(0);
         }
 
+        @media (max-width: 768px) {
+          .reveal {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+          }
+        }
+
         @media (prefers-reduced-motion: reduce) {
           .cursor-glow {
             background: none;

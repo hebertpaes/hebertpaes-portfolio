@@ -64,19 +64,26 @@ export default function Home() {
     media.addEventListener("change", applyTheme);
 
     const elements = document.querySelectorAll<HTMLElement>("[data-reveal]");
+    const isSmallScreen = window.matchMedia("(max-width: 768px)").matches;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("reveal-visible");
-          }
-        });
-      },
-      { threshold: 0.12 }
-    );
+    let observer: IntersectionObserver | null = null;
 
-    elements.forEach((el) => observer.observe(el));
+    if (isSmallScreen) {
+      elements.forEach((el) => el.classList.add("reveal-visible"));
+    } else {
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("reveal-visible");
+            }
+          });
+        },
+        { threshold: 0.12 }
+      );
+
+      elements.forEach((el) => observer?.observe(el));
+    }
 
     let rafId = 0;
     const handleMouseMove = (event: MouseEvent) => {
@@ -96,7 +103,7 @@ export default function Home() {
 
     return () => {
       media.removeEventListener("change", applyTheme);
-      observer.disconnect();
+      observer?.disconnect();
       window.removeEventListener("mousemove", handleMouseMove);
       if (rafId) cancelAnimationFrame(rafId);
     };

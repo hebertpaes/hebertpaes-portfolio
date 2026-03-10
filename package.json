@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "health:auth": "node scripts/auth-healthcheck.mjs"
+    "health:auth": "node scripts/auth-healthcheck.mjs",
+    "health:cms": "node scripts/cms-healthcheck.mjs"
   },
   "dependencies": {
     "mssql": "^12.2.0",

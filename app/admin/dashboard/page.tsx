@@ -43,6 +43,7 @@ type MarketplaceItem = {
   description: string;
   priceLabel: string;
   category: string;
+  imageUrl?: string;
   active: boolean;
 };
 
@@ -350,6 +351,9 @@ export default function AdminDashboard() {
             <h1 className="text-lg font-bold">Dashboard</h1>
           </div>
           <div className="flex items-center gap-2">
+            <a href="/admin/cms" className="rounded-xl border border-white/20 bg-cyan-600 px-4 py-2 text-sm font-semibold hover:bg-cyan-500">
+              Abrir CMS
+            </a>
             <a href="/podcast" className="rounded-xl border border-white/20 bg-violet-600 px-4 py-2 text-sm font-semibold hover:bg-violet-500">
               Ver Podcast
             </a>

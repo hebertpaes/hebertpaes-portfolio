@@ -8,6 +8,7 @@ const protectedPrefixes = [
   "/openclaw/automations",
   "/openclaw/status",
   "/admin/dashboard",
+  "/admin/cms",
 ];
 
 const rateLimitedPaths = ["/api/admin/login", "/api/openclaw/auth"];

@@ -36,6 +36,43 @@ npm run health:auth
 BASE_URL=https://hebertpaes.com npm run health:auth
 ```
 
+## CMS admin (/admin/cms)
+
+O projeto agora inclui um módulo CMS com painel em `/admin/cms`, APIs REST em `/api/admin/cms/*` e bootstrap automático das tabelas SQL (`IF OBJECT_ID(...) IS NULL`) antes de cada operação CMS.
+
+### Seções no painel
+
+- Dashboard com estatísticas CMS
+- Posts/Artigos (CRUD)
+- Categorias e Tags
+- Biblioteca de mídia
+- Usuários e permissões (roles)
+- Configurações do site
+- Editor rich text com toolbar (Markdown/HTML snippets) + textarea fallback
+
+### Endpoints
+
+- `GET/POST /api/admin/cms/posts`
+- `GET/PUT/DELETE /api/admin/cms/posts/:id`
+- `GET/POST /api/admin/cms/categories`
+- `GET/POST /api/admin/cms/tags`
+- `GET/POST /api/admin/cms/media`
+- `GET/POST /api/admin/cms/users`
+- `GET/POST /api/admin/cms/settings`
+- `GET /api/admin/cms/stats`
+
+Todos os endpoints CMS admin exigem sessão admin válida (`hasAdminSession`).
+
+### Healthcheck CMS
+
+```bash
+# local
+npm run health:cms
+
+# produção
+BASE_URL=https://hebertpaes.com npm run health:cms
+```
+
 ## Stack
 
 - Next.js 16

@@ -13,33 +13,33 @@ const socialProviders = [
 
 const topStories = [
   {
-    category: "Política",
-    title: "Plano fiscal avança e muda cenário para investimentos no segundo semestre",
+    category: "POLÍTICA",
+    title: "Congresso acelera agenda fiscal e redesenha o ambiente de negócios para 2026",
     excerpt:
-      "Análise de bastidores com impacto direto no mercado, no consumo e na confiança de empresários.",
-    meta: "Atualizado há 12 min",
+      "Leitura estratégica com dados, contexto e bastidores para quem decide investimento e crescimento.",
+    meta: "Atualizado há 8 min",
   },
   {
-    category: "Economia",
-    title: "Inflação desacelera acima do esperado e pressiona decisões do Banco Central",
+    category: "MUNDO",
+    title: "Nova arquitetura geopolítica pressiona cadeias globais e comércio internacional",
     excerpt:
-      "Especialistas apontam novas oportunidades para crédito, renda fixa e expansão de negócios.",
-    meta: "Atualizado há 21 min",
+      "Análise de impacto para empresas brasileiras em importação, câmbio e competitividade.",
+    meta: "Atualizado há 19 min",
   },
   {
-    category: "Tecnologia",
-    title: "IA generativa redefine rotinas em redações e acelera produção multimídia",
+    category: "TECNOLOGIA",
+    title: "IA editorial entra na fase de escala e redefine redações de alta performance",
     excerpt:
-      "Times editoriais adotam fluxos híbridos entre jornalistas, analistas de dados e automação.",
-    meta: "Atualizado há 34 min",
+      "Como organizações de mídia unem apuração humana, automação e personalização em tempo real.",
+    meta: "Atualizado há 31 min",
   },
 ];
 
-const highlights = [
-  "Cobertura em tempo real",
-  "Análises exclusivas de especialistas",
-  "Entrevistas e opinião",
-  "Mercado, política e tecnologia",
+const opinion = [
+  "Editorial: credibilidade é ativo de longo prazo",
+  "Entrevista: o novo jogo da influência digital",
+  "Especial: mercados emergentes em 2026",
+  "Análise: como dados mudam o ciclo da notícia",
 ];
 
 export default function LoginPage() {
@@ -65,93 +65,116 @@ export default function LoginPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-slate-100 text-slate-900">
+    <main className="min-h-screen bg-[#f5f7fa] text-[#0f172a]">
+      <div className="h-1 w-full bg-gradient-to-r from-[#b10017] via-[#cc1f36] to-[#0d2a56]" />
+
       <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <div>
-            <p className="text-xs font-bold tracking-[0.18em] text-red-600">NEWSROOM PRO</p>
-            <h1 className="text-2xl font-black sm:text-3xl">Portal Global</h1>
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-[11px] font-extrabold tracking-[0.24em] text-[#b10017]">GLOBAL PRESS</p>
+              <h1 className="text-3xl font-black tracking-tight">Edição Profissional</h1>
+            </div>
+            <p className="hidden rounded-full border border-slate-300 px-3 py-1 text-xs font-bold text-slate-600 md:block">
+              LIVE • Última atualização em tempo real
+            </p>
           </div>
-          <nav className="hidden items-center gap-6 text-sm font-semibold text-slate-700 md:flex">
-            <a href="#" className="hover:text-black">Início</a>
-            <a href="#" className="hover:text-black">Brasil</a>
-            <a href="#" className="hover:text-black">Mundo</a>
-            <a href="#" className="hover:text-black">Negócios</a>
-            <a href="#" className="hover:text-black">Tech</a>
+
+          <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-slate-200 pt-3 text-sm font-bold text-slate-700">
+            <a href="#" className="hover:text-black">HOME</a>
+            <a href="#" className="hover:text-black">BRASIL</a>
+            <a href="#" className="hover:text-black">INTERNACIONAL</a>
+            <a href="#" className="hover:text-black">ECONOMIA</a>
+            <a href="#" className="hover:text-black">POLÍTICA</a>
+            <a href="#" className="hover:text-black">OPINIÃO</a>
+            <a href="#" className="hover:text-black">TECNOLOGIA</a>
           </nav>
         </div>
       </header>
 
-      <section className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[1.45fr_1fr] lg:px-8 lg:py-10">
-        <article className="rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 p-6 text-white sm:p-8">
-          <p className="mb-3 inline-flex rounded-full bg-red-600 px-3 py-1 text-xs font-bold uppercase tracking-wide">
-            Destaque do dia
-          </p>
-          <h2 className="text-2xl font-black leading-tight sm:text-4xl">
-            Jornalismo premium com design moderno, leitura elegante e foco total em credibilidade
-          </h2>
-          <p className="mt-4 max-w-2xl text-sm text-slate-200 sm:text-base">
-            Estrutura editorial inspirada nos maiores portais globais, com seções estratégicas,
-            chamadas claras e experiência totalmente responsiva para desktop, tablet e mobile.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-2 text-xs font-semibold text-slate-200">
-            {highlights.map((item) => (
-              <span key={item} className="rounded-full border border-white/25 px-3 py-1">
-                {item}
-              </span>
+      <section className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[1.4fr_0.95fr] lg:px-8 lg:py-10">
+        <article className="overflow-hidden rounded-2xl border border-slate-300 bg-white shadow-sm">
+          <div className="border-b border-slate-200 bg-[#0b162b] px-6 py-5 text-white sm:px-8 sm:py-7">
+            <p className="inline-flex rounded-full bg-[#b10017] px-3 py-1 text-[11px] font-extrabold tracking-wide">
+              CAPA • REPORTAGEM PRINCIPAL
+            </p>
+            <h2 className="mt-3 text-3xl font-black leading-tight sm:text-4xl">
+              Um visual editorial de elite: moderno, limpo e agressivo em hierarquia de informação
+            </h2>
+            <p className="mt-4 max-w-2xl text-sm text-slate-200 sm:text-base">
+              Projeto com estética de grandes redações internacionais: tipografia forte, grid de notícias,
+              contraste premium e leitura orientada por prioridade editorial.
+            </p>
+          </div>
+
+          <div className="grid gap-4 p-6 sm:p-8 md:grid-cols-2">
+            {topStories.slice(0, 2).map((story) => (
+              <article key={story.title} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <p className="text-[11px] font-extrabold tracking-wide text-[#b10017]">{story.category}</p>
+                <h3 className="mt-2 text-lg font-extrabold leading-snug">{story.title}</h3>
+                <p className="mt-2 text-sm text-slate-600">{story.excerpt}</p>
+                <p className="mt-3 text-xs font-semibold text-slate-500">{story.meta}</p>
+              </article>
             ))}
           </div>
         </article>
 
-        <aside className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-          <h3 className="text-lg font-extrabold">Acesso do assinante</h3>
-          <p className="mt-1 text-sm text-slate-600">
-            Entre para personalizar sua capa, salvar artigos e acompanhar newsletters exclusivas.
-          </p>
+        <aside className="space-y-4">
+          <section className="rounded-2xl border border-slate-300 bg-white p-5 shadow-sm sm:p-6">
+            <h3 className="text-lg font-black">Acesso do assinante</h3>
+            <p className="mt-1 text-sm text-slate-600">
+              Faça login para liberar conteúdos exclusivos, newsletters e personalização da capa.
+            </p>
 
-          {errorText && <p className="mt-3 rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{errorText}</p>}
+            {errorText && <p className="mt-3 rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{errorText}</p>}
 
-          <a
-            href={githubUrl}
-            className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2.5 rounded-xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black"
-          >
-            <img src="/icons/github.svg" alt="" className="h-5 w-5 shrink-0" aria-hidden="true" />
-            Entrar (usuários existentes)
-          </a>
+            <a
+              href={githubUrl}
+              className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2.5 rounded-xl bg-[#0b162b] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#091124]"
+            >
+              <img src="/icons/github.svg" alt="" className="h-5 w-5 shrink-0" aria-hidden="true" />
+              Entrar (usuários existentes)
+            </a>
 
-          <div className="mt-3 grid gap-3">
-            {socialProviders.map((provider) => (
-              <a
-                key={provider.name}
-                href={`/api/openclaw/auth?provider=${provider.key}&action=start${nextPath ? `&next=${encodeURIComponent(nextPath)}` : ""}`}
-                className={`inline-flex min-h-11 w-full items-center justify-center gap-2.5 rounded-xl px-4 py-3 text-sm font-semibold transition ${provider.className}`}
-              >
-                <img src={provider.icon} alt="" className="h-5 w-5 shrink-0" aria-hidden="true" />
-                Entrar com {provider.name}
-              </a>
-            ))}
-          </div>
+            <div className="mt-3 grid gap-3">
+              {socialProviders.map((provider) => (
+                <a
+                  key={provider.name}
+                  href={`/api/openclaw/auth?provider=${provider.key}&action=start${nextPath ? `&next=${encodeURIComponent(nextPath)}` : ""}`}
+                  className={`inline-flex min-h-11 w-full items-center justify-center gap-2.5 rounded-xl px-4 py-3 text-sm font-bold transition ${provider.className}`}
+                >
+                  <img src={provider.icon} alt="" className="h-5 w-5 shrink-0" aria-hidden="true" />
+                  Entrar com {provider.name}
+                </a>
+              ))}
+            </div>
+          </section>
+
+          <section className="rounded-2xl border border-slate-300 bg-white p-5 shadow-sm sm:p-6">
+            <h3 className="text-base font-black">Opinião & Análises</h3>
+            <ul className="mt-3 space-y-2">
+              {opinion.map((item) => (
+                <li key={item} className="text-sm font-semibold text-slate-700">
+                  • {item}
+                </li>
+              ))}
+            </ul>
+          </section>
         </aside>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
         <div className="mb-5 flex items-end justify-between border-b border-slate-300 pb-3">
           <h3 className="text-2xl font-black">Últimas notícias</h3>
-          <a href="#" className="text-sm font-bold text-red-600 hover:text-red-700">
-            Ver tudo
-          </a>
+          <a href="#" className="text-sm font-extrabold text-[#b10017] hover:text-[#8f0012]">Ver cobertura completa</a>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-3">
-          {topStories.map((story) => (
-            <article key={story.title} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-              <p className="text-xs font-bold uppercase tracking-wide text-red-600">{story.category}</p>
-              <h4 className="mt-2 text-lg font-extrabold leading-snug">{story.title}</h4>
-              <p className="mt-2 text-sm text-slate-600">{story.excerpt}</p>
-              <p className="mt-3 text-xs font-medium text-slate-500">{story.meta}</p>
-            </article>
-          ))}
-        </div>
+        <article className="rounded-xl border border-slate-300 bg-white p-5 shadow-sm">
+          <p className="text-[11px] font-extrabold tracking-wide text-[#b10017]">{topStories[2].category}</p>
+          <h4 className="mt-2 text-2xl font-black leading-snug">{topStories[2].title}</h4>
+          <p className="mt-2 text-sm text-slate-600">{topStories[2].excerpt}</p>
+          <p className="mt-3 text-xs font-semibold text-slate-500">{topStories[2].meta}</p>
+        </article>
       </section>
     </main>
   );

@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import HomePageClient from "./home-page-client";
 
 export const metadata: Metadata = {
-  title: "Portfólio Oficial",
+  title: "Blog de Notícias",
   description:
-    "Portfólio oficial de Hebert Paes com podcast, cursos, marketplace e chat em uma experiência mobile-first.",
+    "Portal estilo blog de notícias com visual editorial premium, foco mobile e navegação por editorias.",
   alternates: {
     canonical: "/",
   },

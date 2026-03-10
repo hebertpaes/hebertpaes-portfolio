@@ -44,8 +44,9 @@ export default function AdminLoginPage() {
         <h1 className="mb-2 text-3xl font-black">Admin Login</h1>
         <p className="mb-6 text-slate-300">Acesso administrativo com validação no banco de dados.</p>
 
-        <label className="mb-1 block text-sm text-slate-300">E-mail</label>
+        <label htmlFor="admin-email" className="mb-1 block text-sm text-slate-300">E-mail</label>
         <input
+          id="admin-email"
           type="email"
           autoComplete="username"
           required
@@ -55,9 +56,10 @@ export default function AdminLoginPage() {
           placeholder="admin@hebertpaes.com"
         />
 
-        <label className="mb-1 block text-sm text-slate-300">Senha</label>
+        <label htmlFor="admin-password" className="mb-1 block text-sm text-slate-300">Senha</label>
         <div className="mb-4 flex gap-2">
           <input
+            id="admin-password"
             type={showPassword ? "text" : "password"}
             autoComplete="current-password"
             required

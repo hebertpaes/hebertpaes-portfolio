@@ -6,11 +6,13 @@ import WebVitals from "./components/web-vitals";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const siteUrl = "https://hebertpaes.com";
@@ -25,9 +27,6 @@ export const metadata: Metadata = {
   applicationName: "Hebert Paes",
   manifest: "/manifest.webmanifest",
   keywords: ["Hebert Paes", "podcast", "portfólio", "música", "chat"],
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
     type: "website",
     locale: "pt_BR",
@@ -53,6 +52,13 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
   icons: {
     icon: "/openclaw-icon.svg",

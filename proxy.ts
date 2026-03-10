@@ -62,6 +62,7 @@ function getCsp() {
     "base-uri 'self'",
     "form-action 'self'",
     "frame-ancestors 'self'",
+    "object-src 'none'",
     "img-src 'self' data: https:",
     "font-src 'self' https://fonts.gstatic.com data:",
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com${isDev ? "" : ""}`,
@@ -75,10 +76,16 @@ function getCsp() {
 function applySecurityHeaders(res: NextResponse) {
   res.headers.set("X-Frame-Options", "SAMEORIGIN");
   res.headers.set("X-Content-Type-Options", "nosniff");
+  res.headers.set("X-DNS-Prefetch-Control", "on");
+  res.headers.set("X-Permitted-Cross-Domain-Policies", "none");
   res.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   res.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  res.headers.set("Origin-Agent-Cluster", "?1");
   res.headers.set("Cross-Origin-Opener-Policy", "same-origin");
   res.headers.set("Cross-Origin-Resource-Policy", "same-origin");
+  if (process.env.NODE_ENV === "production") {
+    res.headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload");
+  }
   res.headers.set("Content-Security-Policy", getCsp());
   return res;
 }

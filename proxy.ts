@@ -95,6 +95,12 @@ export function proxy(req: NextRequest) {
     return applySecurityHeaders(new NextResponse("Too many requests", { status: 429 }));
   }
 
+  if (req.nextUrl.pathname === "/login/index.php") {
+    const target = new URL("/login/index.py", req.url);
+    target.search = req.nextUrl.search;
+    return applySecurityHeaders(NextResponse.redirect(target, 308));
+  }
+
   const { pathname, search } = req.nextUrl;
   const requiresAuth = protectedPrefixes.some((prefix) => pathname.startsWith(prefix));
 

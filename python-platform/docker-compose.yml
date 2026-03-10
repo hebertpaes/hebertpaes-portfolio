@@ -1,0 +1,66 @@
+name: hybrid-python-platform
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-platformdb}
+      POSTGRES_USER: ${POSTGRES_USER:-platformuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-platformpass}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-platformuser} -d ${POSTGRES_DB:-platformdb}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - '5432:5432'
+
+  redis:
+    image: redis:7
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - '6379:6379'
+
+  django:
+    build:
+      context: .
+      dockerfile: django_cms/Dockerfile
+    env_file:
+      - .env
+    environment:
+      POSTGRES_HOST: postgres
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-platformuser}:${POSTGRES_PASSWORD:-platformpass}@postgres:5432/${POSTGRES_DB:-platformdb}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      sh -c "
+      python manage.py migrate --noinput &&
+      python manage.py collectstatic --noinput &&
+      gunicorn project.wsgi:application --bind 0.0.0.0:8000 --workers 3 --threads 2 --timeout 60
+      "
+    ports:
+      - '8000:8000'
+
+  fastapi:
+    build:
+      context: .
+      dockerfile: fastapi_api/Dockerfile
+    env_file:
+      - .env
+    environment:
+      POSTGRES_HOST: postgres
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-platformuser}:${POSTGRES_PASSWORD:-platformpass}@postgres:5432/${POSTGRES_DB:-platformdb}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - '8001:8001'
+
+volumes:
+  postgres_data:
+  redis_data:

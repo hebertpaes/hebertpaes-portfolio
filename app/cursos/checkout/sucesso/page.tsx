@@ -1,36 +1,21 @@
-"use client";
+type Props = {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+};
 
-import { useEffect, useState } from "react";
+export default async function CheckoutSuccessPage({ searchParams }: Props) {
+  const params = (await searchParams) || {};
+  const checkoutRaw = params.checkoutId;
+  const courseRaw = params.courseId;
 
-export default function CheckoutSuccessPage() {
-  const [statusMsg, setStatusMsg] = useState("Confirmando matrícula...");
-
-  const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : new URLSearchParams();
-  const checkoutId = params.get("checkoutId") || "--";
-  const courseId = params.get("courseId") || "--";
-
-  useEffect(() => {
-    if (!checkoutId || checkoutId === "--") return;
-
-    fetch("/api/cursos/checkout/confirm", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ checkoutId }),
-    })
-      .then((r) => r.json())
-      .then((d) => {
-        if (d?.ok) setStatusMsg("Matrícula ativada com sucesso.");
-        else setStatusMsg("Pagamento confirmado. Matrícula será sincronizada no webhook.");
-      })
-      .catch(() => setStatusMsg("Pagamento confirmado. Matrícula será sincronizada no webhook."));
-  }, [checkoutId]);
+  const checkoutId = Array.isArray(checkoutRaw) ? checkoutRaw[0] : checkoutRaw || "--";
+  const courseId = Array.isArray(courseRaw) ? courseRaw[0] : courseRaw || "--";
 
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-14 text-white">
       <div className="mx-auto max-w-2xl rounded-3xl border border-white/10 bg-white/[0.05] p-8 text-center backdrop-blur-xl">
         <p className="text-xs uppercase tracking-[0.25em] text-emerald-200">Pagamento confirmado</p>
         <h1 className="mt-3 text-4xl font-black">Compra aprovada</h1>
-        <p className="mt-3 text-slate-300">{statusMsg}</p>
+        <p className="mt-3 text-slate-300">Matrícula ativada com sucesso.</p>
 
         <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-4 text-left text-sm">
           <p><strong>Checkout:</strong> {checkoutId}</p>

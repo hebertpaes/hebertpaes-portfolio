@@ -133,7 +133,8 @@ export default function HomePageClient() {
             <a href="/noticias" className="rounded-full border border-white/20 px-3 py-1.5 hover:bg-white/10">Notícias</a>
             <a href="/cursos" className="rounded-full border border-white/20 px-3 py-1.5 hover:bg-white/10">Cursos</a>
             <a href="/marketplace" className="rounded-full border border-white/20 px-3 py-1.5 hover:bg-white/10">Loja IA</a>
-            <a href="/dashboard" className="rounded-full border border-cyan-300/60 bg-cyan-300/10 px-3 py-1.5 text-cyan-100 hover:bg-cyan-300/20">Dashboard</a>
+            <a href="/ai-platform" className="rounded-full border border-cyan-300/60 bg-cyan-300/10 px-3 py-1.5 text-cyan-100 hover:bg-cyan-300/20">AI Platform</a>
+            <a href="/dashboard" className="rounded-full border border-white/20 px-3 py-1.5 hover:bg-white/10">Dashboard</a>
           </nav>
         </div>
       </header>

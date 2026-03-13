@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import ThemeToggle from "../components/theme-toggle";
 
 const headlines = [
   {
@@ -34,22 +37,25 @@ const quickLinks = [
 
 export default function NewsHomePageClient() {
   return (
-    <main className="min-h-screen bg-slate-100 text-slate-900">
+    <main className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="h-1 w-full bg-gradient-to-r from-[#a4001a] via-[#c81f36] to-[#0f2b58]" />
 
-      <header className="border-b border-slate-200 bg-white">
+      <header className="border-b border-[var(--border-primary)] bg-[var(--bg-surface)]">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[11px] font-extrabold tracking-[0.22em] text-[#a4001a]">HEBERTPAES.COM</p>
               <h1 className="text-3xl font-black tracking-tight">Blog de Notícias</h1>
             </div>
-            <a href="/login" className="rounded-full border border-slate-300 px-3 py-1 text-xs font-bold text-slate-600 hover:bg-slate-50">
-              Edição ao vivo
-            </a>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <a href="/login" className="rounded-full border border-[var(--border-primary)] px-3 py-1 text-xs font-bold text-[var(--text-secondary)] hover:bg-[var(--bg-muted)]">
+                Edição ao vivo
+              </a>
+            </div>
           </div>
 
-          <nav aria-label="Editorias" className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-slate-200 pt-3 text-sm font-bold text-slate-700">
+          <nav aria-label="Editorias" className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-[var(--border-primary)] pt-3 text-sm font-bold text-[var(--text-secondary)]">
             {quickLinks.map((link) => (
               <a key={link.label} href={link.href} className="hover:text-black">
                 {link.label}
@@ -60,7 +66,7 @@ export default function NewsHomePageClient() {
       </header>
 
       <section className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[1.45fr_0.95fr] lg:px-8 lg:py-10">
-        <article className="overflow-hidden rounded-2xl border border-slate-300 bg-white shadow-sm">
+        <article className="overflow-hidden rounded-2xl border border-[var(--border-primary)] bg-[var(--bg-surface)] shadow-sm">
           <div className="relative h-64 sm:h-80">
             <Image
               src="/illustrations/mk-p1.svg"
@@ -76,7 +82,7 @@ export default function NewsHomePageClient() {
             <h2 className="mt-2 text-3xl font-black leading-tight sm:text-4xl">
               Jornalismo digital com estética premium, navegação clara e leitura orientada por relevância
             </h2>
-            <p className="mt-3 text-sm text-slate-600 sm:text-base">
+            <p className="mt-3 text-sm text-[var(--text-secondary)] sm:text-base">
               Estrutura editorial moderna inspirada nos grandes portais globais, com foco em performance,
               credibilidade e experiência mobile-first.
             </p>
@@ -88,10 +94,10 @@ export default function NewsHomePageClient() {
 
         <aside className="space-y-4">
           {headlines.map((item) => (
-            <article key={item.title} className="rounded-2xl border border-slate-300 bg-white p-5 shadow-sm">
+            <article key={item.title} className="rounded-2xl border border-[var(--border-primary)] bg-[var(--bg-surface)] p-5 shadow-sm">
               <p className="text-[11px] font-extrabold tracking-wide text-[#a4001a]">{item.category}</p>
               <h3 className="mt-2 text-lg font-extrabold leading-snug">{item.title}</h3>
-              <p className="mt-2 text-sm text-slate-600">{item.excerpt}</p>
+              <p className="mt-2 text-sm text-[var(--text-secondary)]">{item.excerpt}</p>
               <a href={item.href} className="mt-3 inline-flex text-sm font-bold text-[#0f2b58] hover:text-[#0b2348]">
                 Continuar lendo
               </a>

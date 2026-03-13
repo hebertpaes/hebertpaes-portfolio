@@ -27,54 +27,27 @@ export const metadata: Metadata = {
   applicationName: "Hebert Paes",
   manifest: "/manifest.webmanifest",
   keywords: ["Hebert Paes", "podcast", "portfólio", "música", "chat"],
-  openGraph: {
-    type: "website",
-    locale: "pt_BR",
-    url: siteUrl,
-    siteName: "Hebert Paes",
-    title: "Hebert Paes | Portfólio Oficial",
-    description: "Visual inovador com podcast, loja em reformulação e atendimento direto no chat Jabes.",
-    images: [
-      {
-        url: "/openclaw-icon.svg",
-        width: 1200,
-        height: 630,
-        alt: "Hebert Paes",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Hebert Paes | Portfólio Oficial",
-    description: "Acesse o portfólio oficial com design moderno, podcast em destaque e chat integrado.",
-    images: ["/openclaw-icon.svg"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
-    },
-  },
-  icons: {
-    icon: "/openclaw-icon.svg",
-    shortcut: "/openclaw-icon.svg",
-    apple: "/openclaw-icon.svg",
-  },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f1f5f9" },
-    { media: "(prefers-color-scheme: dark)", color: "#04070f" },
+    { media: "(prefers-color-scheme: light)", color: "#f4f7fb" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0f19" },
   ],
 };
+
+const themeInitScript = `(() => {
+  try {
+    const key = 'hp-theme-mode';
+    const saved = localStorage.getItem(key) || 'system';
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const resolved = saved === 'system' ? (systemDark ? 'dark' : 'light') : saved;
+    document.documentElement.setAttribute('data-theme', resolved);
+    document.documentElement.setAttribute('data-theme-mode', saved);
+  } catch (_) {}
+})();`;
 
 export default function RootLayout({
   children,
@@ -82,10 +55,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang="pt-BR" suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased transition-colors duration-300`}>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <WebVitals />
         {children}
       </body>

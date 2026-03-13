@@ -1,6 +1,9 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useState } from "react";
+import ThemeToggle from "../components/theme-toggle";
 
 type Msg = { role: "user" | "assistant"; text: string };
 
@@ -34,17 +37,20 @@ export default function ChatPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0b0f19] text-slate-100">
+    <main className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-300">
       <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-6">
-        <header className="rounded-2xl border border-white/10 bg-[#111827] p-4">
-          <h1 className="text-2xl font-black">OpenClaw AI Chat</h1>
-          <p className="text-sm text-slate-300">Modo escuro estilo OpenClaw com agente integrado em hebertpaes.com/chat</p>
+        <header className="flex items-center justify-between rounded-2xl border border-[var(--border-primary)] bg-[var(--bg-surface)] p-4">
+          <div>
+            <h1 className="text-2xl font-black">OpenClaw AI Chat</h1>
+            <p className="text-sm text-[var(--text-secondary)]">Modo dark/light com agente integrado em hebertpaes.com/chat</p>
+          </div>
+          <ThemeToggle />
         </header>
 
-        <section className="rounded-2xl border border-white/10 bg-[#0f172a] p-4">
+        <section className="rounded-2xl border border-[var(--border-primary)] bg-[var(--bg-muted)] p-4">
           <div className="mb-3 flex items-center gap-2 text-sm">
-            <span className="text-slate-300">Modelo:</span>
-            <select value={model} onChange={(e) => setModel(e.target.value)} className="rounded-lg border border-white/20 bg-[#111827] px-2 py-1">
+            <span className="text-[var(--text-secondary)]">Modelo:</span>
+            <select value={model} onChange={(e) => setModel(e.target.value)} className="rounded-lg border border-[var(--border-primary)] bg-[var(--bg-surface)] px-2 py-1">
               <option value="openai">OpenAI</option>
               <option value="claude">Claude</option>
               <option value="gemini">Gemini</option>
@@ -53,9 +59,9 @@ export default function ChatPage() {
             </select>
           </div>
 
-          <div className="h-[55vh] space-y-3 overflow-y-auto rounded-xl border border-white/10 bg-[#020617] p-3">
+          <div className="h-[55vh] space-y-3 overflow-y-auto rounded-xl border border-[var(--border-primary)] bg-[var(--bg-surface)] p-3">
             {messages.map((m, i) => (
-              <div key={i} className={m.role === "user" ? "ml-auto max-w-[85%] rounded-xl bg-cyan-500/20 p-3" : "max-w-[85%] rounded-xl bg-white/10 p-3"}>
+              <div key={i} className={m.role === "user" ? "ml-auto max-w-[85%] rounded-xl bg-cyan-500/20 p-3" : "max-w-[85%] rounded-xl bg-[var(--bg-muted)] p-3"}>
                 {m.text}
               </div>
             ))}
@@ -67,9 +73,9 @@ export default function ChatPage() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && send()}
               placeholder="Digite sua mensagem..."
-              className="w-full rounded-xl border border-white/20 bg-[#111827] px-3 py-2 text-sm"
+              className="w-full rounded-xl border border-[var(--border-primary)] bg-[var(--bg-surface)] px-3 py-2 text-sm"
             />
-            <button onClick={send} disabled={loading} className="rounded-xl bg-cyan-300 px-4 py-2 text-sm font-bold text-black disabled:opacity-60">
+            <button onClick={send} disabled={loading} className="rounded-xl bg-[var(--accent)] px-4 py-2 text-sm font-bold text-black disabled:opacity-60">
               {loading ? "..." : "Enviar"}
             </button>
           </div>

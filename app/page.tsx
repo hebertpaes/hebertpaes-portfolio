@@ -1,5 +1,7 @@
 "use client";
 
+import ThemeToggle from "./components/theme-toggle";
+
 export default function HebertPaesYouStyleHomepage() {
   const logos = ["OpenAI", "Azure", "Anthropic", "Google Cloud", "AWS", "Meta", "Vercel", "Notion"];
 
@@ -43,35 +45,36 @@ export default function HebertPaesYouStyleHomepage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#07090f] text-white">
+    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute left-1/2 top-[-120px] h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-cyan-500/15 blur-3xl" />
         <div className="absolute right-[8%] top-[20%] h-[260px] w-[260px] rounded-full bg-fuchsia-500/10 blur-3xl" />
         <div className="absolute left-[6%] top-[34%] h-[220px] w-[220px] rounded-full bg-blue-500/10 blur-3xl" />
       </div>
 
-      <header className="sticky top-0 z-30 border-b border-white/10 bg-[#07090f]/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-30 border-b border-[var(--border-primary)] bg-[var(--bg-primary)]/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/15 bg-white/5 shadow-[0_0_40px_rgba(56,189,248,0.15)]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/15 bg-[var(--bg-surface)]/70 shadow-[0_0_40px_rgba(56,189,248,0.15)]">
               <span className="text-sm font-semibold tracking-[0.2em]">HP</span>
             </div>
             <div>
               <div className="text-lg font-semibold">HebertPaes</div>
-              <div className="text-xs text-white/45">AI Search Infrastructure</div>
+              <div className="text-xs text-[var(--text-primary)]/45">AI Search Infrastructure</div>
             </div>
           </div>
 
-          <nav className="hidden items-center gap-8 text-sm text-white/70 md:flex">
-            <a href="/chat" className="transition hover:text-white">Chat</a>
-            <a href="/ai-platform" className="transition hover:text-white">AI Platform</a>
-            <a href="/noticias" className="transition hover:text-white">Notícias</a>
-            <a href="/cursos" className="transition hover:text-white">Cursos</a>
-            <a href="/marketplace" className="transition hover:text-white">Marketplace</a>
+          <nav className="hidden items-center gap-8 text-sm text-[var(--text-primary)]/70 md:flex">
+            <a href="/chat" className="transition hover:text-[var(--text-primary)]">Chat</a>
+            <a href="/ai-platform" className="transition hover:text-[var(--text-primary)]">AI Platform</a>
+            <a href="/noticias" className="transition hover:text-[var(--text-primary)]">Notícias</a>
+            <a href="/cursos" className="transition hover:text-[var(--text-primary)]">Cursos</a>
+            <a href="/marketplace" className="transition hover:text-[var(--text-primary)]">Marketplace</a>
           </nav>
 
           <div className="flex items-center gap-3">
-            <a href="/dashboard" className="hidden rounded-full border border-white/15 px-4 py-2 text-sm text-white/80 transition hover:bg-white/5 md:inline-flex">Entrar</a>
+            <ThemeToggle />
+            <a href="/dashboard" className="hidden rounded-full border border-white/15 px-4 py-2 text-sm text-[var(--text-primary)]/80 transition hover:bg-[var(--bg-surface)]/70 md:inline-flex">Entrar</a>
             <a href="/ai-platform" className="rounded-full bg-white px-4 py-2 text-sm font-medium text-black transition hover:scale-[1.02]">Começar</a>
           </div>
         </div>
@@ -83,35 +86,35 @@ export default function HebertPaesYouStyleHomepage() {
             <h1 className="text-balance text-4xl font-semibold leading-tight tracking-tight sm:text-6xl lg:text-7xl">
               Construa a camada de IA da sua marca com <span className="bg-gradient-to-r from-cyan-300 via-white to-fuchsia-300 bg-clip-text text-transparent">HebertPaes</span>.
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-pretty text-base leading-7 text-white/70 sm:text-lg">
+            <p className="mx-auto mt-6 max-w-2xl text-pretty text-base leading-7 text-[var(--text-primary)]/70 sm:text-lg">
               Um homepage em estilo enterprise, com visual premium, foco em busca com IA, APIs, índices verticais e conversão comercial.
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <a href="/ai-platform" className="rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition hover:scale-[1.02]">Ver plataforma</a>
-              <a href="/cursos" className="rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-medium text-white transition hover:bg-white/10">Ver cursos</a>
+              <a href="/cursos" className="rounded-full border border-white/15 bg-[var(--bg-surface)]/70 px-6 py-3 text-sm font-medium text-[var(--text-primary)] transition hover:bg-white/10">Ver cursos</a>
             </div>
           </div>
 
-          <div className="mt-16 rounded-[28px] border border-white/10 bg-white/5 p-4 shadow-2xl shadow-cyan-900/10 backdrop-blur-xl sm:p-6 lg:p-8">
+          <div className="mt-16 rounded-[28px] border border-[var(--border-primary)] bg-[var(--bg-surface)]/70 p-4 shadow-2xl shadow-cyan-900/10 backdrop-blur-xl sm:p-6 lg:p-8">
             <div className="grid gap-4 lg:grid-cols-[1.3fr_0.7fr]">
-              <div className="rounded-[24px] border border-white/10 bg-[#0b1020] p-6">
+              <div className="rounded-[24px] border border-[var(--border-primary)] bg-[#0b1020] p-6">
                 <div className="mb-4 flex items-center justify-between">
                   <div>
-                    <div className="text-sm text-white/50">Painel principal</div>
+                    <div className="text-sm text-[var(--text-primary)]/50">Painel principal</div>
                     <div className="text-xl font-semibold">HebertPaes Search Console</div>
                   </div>
                   <div className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-200">Online</div>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
-                  <div className="mb-3 text-xs uppercase tracking-[0.25em] text-white/40">Prompt</div>
-                  <div className="rounded-2xl border border-cyan-400/15 bg-cyan-400/5 p-4 text-sm text-white/80">
+                <div className="rounded-2xl border border-[var(--border-primary)] bg-[var(--bg-muted)] p-4">
+                  <div className="mb-3 text-xs uppercase tracking-[0.25em] text-[var(--text-primary)]/40">Prompt</div>
+                  <div className="rounded-2xl border border-cyan-400/15 bg-cyan-400/5 p-4 text-sm text-[var(--text-primary)]/80">
                     “Buscar informações confiáveis em tempo real para respostas com contexto, citações e velocidade.”
                   </div>
                   <div className="mt-4 grid gap-3 sm:grid-cols-3">
                     {features.map((feature) => (
-                      <div key={feature.title} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                      <div key={feature.title} className="rounded-2xl border border-[var(--border-primary)] bg-[var(--bg-surface)]/70 p-4">
                         <div className="text-sm font-medium">{feature.title}</div>
-                        <div className="mt-2 text-sm leading-6 text-white/60">{feature.text}</div>
+                        <div className="mt-2 text-sm leading-6 text-[var(--text-primary)]/60">{feature.text}</div>
                       </div>
                     ))}
                   </div>
@@ -120,9 +123,9 @@ export default function HebertPaesYouStyleHomepage() {
 
               <div className="space-y-4">
                 {stats.map((stat) => (
-                  <div key={stat.label} className="rounded-[24px] border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
+                  <div key={stat.label} className="rounded-[24px] border border-[var(--border-primary)] bg-[var(--bg-surface)]/70 p-6 backdrop-blur-xl">
                     <div className="text-3xl font-semibold">{stat.value}</div>
-                    <div className="mt-2 text-sm text-white/55">{stat.label}</div>
+                    <div className="mt-2 text-sm text-[var(--text-primary)]/55">{stat.label}</div>
                   </div>
                 ))}
               </div>
@@ -130,9 +133,9 @@ export default function HebertPaesYouStyleHomepage() {
           </div>
         </section>
 
-        <section className="border-y border-white/10 bg-white/[0.03]">
+        <section className="border-y border-[var(--border-primary)] bg-white/[0.03]">
           <div className="mx-auto max-w-7xl px-6 py-6 lg:px-8">
-            <div className="grid grid-cols-2 gap-4 text-center text-sm text-white/45 sm:grid-cols-4 lg:grid-cols-8">
+            <div className="grid grid-cols-2 gap-4 text-center text-sm text-[var(--text-primary)]/45 sm:grid-cols-4 lg:grid-cols-8">
               {logos.map((logo) => (
                 <div key={logo} className="rounded-2xl border border-white/5 bg-white/[0.03] px-4 py-3">{logo}</div>
               ))}
@@ -148,10 +151,10 @@ export default function HebertPaesYouStyleHomepage() {
 
           <div className="mt-12 grid gap-6 lg:grid-cols-3">
             {cards.map((card) => (
-              <div key={card.title} className="rounded-[28px] border border-white/10 bg-gradient-to-b from-white/8 to-white/[0.03] p-7 shadow-xl shadow-black/20">
+              <div key={card.title} className="rounded-[28px] border border-[var(--border-primary)] bg-gradient-to-b from-white/8 to-white/[0.03] p-7 shadow-xl shadow-black/20">
                 <div className="text-sm text-cyan-200/80">{card.eyebrow}</div>
                 <h3 className="mt-3 text-2xl font-semibold">{card.title}</h3>
-                <p className="mt-4 text-sm leading-7 text-white/65">{card.text}</p>
+                <p className="mt-4 text-sm leading-7 text-[var(--text-primary)]/65">{card.text}</p>
               </div>
             ))}
           </div>

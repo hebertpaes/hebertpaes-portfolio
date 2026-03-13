@@ -2,16 +2,16 @@ import type { Metadata } from "next";
 import HomePageClient from "./home-page-client";
 
 export const metadata: Metadata = {
-  title: "Hebert Paes | Plataforma de IA",
+  title: "Blog de Notícias",
   description:
-    "Plataforma completa com chat multi-modelo, cursos de IA, marketplace de produtos digitais e dashboard inteligente.",
+    "Portal estilo blog de notícias com visual editorial premium, foco mobile e navegação por editorias.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Hebert Paes | Plataforma de IA",
+    title: "Hebert Paes | Portfólio Oficial",
     description:
-      "OpenAI, Claude, Gemini, Llama e Mistral em uma única experiência com chat, cursos, loja e dashboard.",
+      "Podcast, cursos, marketplace e chat em uma experiência digital moderna e otimizada para mobile.",
     url: "/",
     type: "website",
     images: [
@@ -19,14 +19,14 @@ export const metadata: Metadata = {
         url: "/openclaw-icon.svg",
         width: 1200,
         height: 630,
-        alt: "Hebert Paes Plataforma de IA",
+        alt: "Hebert Paes",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hebert Paes | Plataforma de IA",
-    description: "Ecossistema completo de IA para chat, aprendizagem, vendas e analytics.",
+    title: "Hebert Paes | Portfólio Oficial",
+    description: "Experiência digital com podcast, cursos, marketplace e chat.",
     images: ["/openclaw-icon.svg"],
   },
 };

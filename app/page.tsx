@@ -63,6 +63,7 @@ export default function HebertPaesYouStyleHomepage() {
           </div>
 
           <nav className="hidden items-center gap-8 text-sm text-white/70 md:flex">
+            <a href="/chat" className="transition hover:text-white">Chat</a>
             <a href="/ai-platform" className="transition hover:text-white">AI Platform</a>
             <a href="/noticias" className="transition hover:text-white">Notícias</a>
             <a href="/cursos" className="transition hover:text-white">Cursos</a>
@@ -79,9 +80,6 @@ export default function HebertPaesYouStyleHomepage() {
       <main>
         <section className="relative mx-auto max-w-7xl px-6 pb-20 pt-20 lg:px-8 lg:pb-28 lg:pt-28">
           <div className="mx-auto max-w-4xl text-center">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-1.5 text-xs text-cyan-200">
-              Plataforma inspirada em you.com/home
-            </div>
             <h1 className="text-balance text-4xl font-semibold leading-tight tracking-tight sm:text-6xl lg:text-7xl">
               Construa a camada de IA da sua marca com <span className="bg-gradient-to-r from-cyan-300 via-white to-fuchsia-300 bg-clip-text text-transparent">HebertPaes</span>.
             </h1>

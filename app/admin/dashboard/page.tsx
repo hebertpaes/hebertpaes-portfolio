@@ -99,7 +99,7 @@ export default function AdminDashboard() {
     setLoadingOverview(true);
     try {
       const [podcastRes, overviewRes, cursosRes, mkOverviewRes, mkItemsRes] = await Promise.all([
-        fetch('/api/prototype/podcast'),
+        fetch('/api/openclaw/podcast'),
         fetch('/api/admin/overview'),
         fetch('/api/admin/cursos/overview?limit=12'),
         fetch('/api/admin/marketplace/overview'),
@@ -154,7 +154,7 @@ export default function AdminDashboard() {
     setSaving(true);
     setNotice('');
     try {
-      const res = await fetch('/api/prototype/podcast', {
+      const res = await fetch('/api/openclaw/podcast', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ episodes }),

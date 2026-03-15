@@ -12,7 +12,7 @@ export default function OpenClawAppPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch("/api/prototype/agents")
+    fetch("/api/openclaw/agents")
       .then((r) => r.json())
       .then((data) => setAgents(data.agents || []))
       .catch(() => setAgents([]));
@@ -22,7 +22,7 @@ export default function OpenClawAppPage() {
     setLoading(true);
     setOutput("");
     try {
-      const res = await fetch("/api/prototype/agents", {
+      const res = await fetch("/api/openclaw/agents", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ agentId: selectedAgent, prompt }),

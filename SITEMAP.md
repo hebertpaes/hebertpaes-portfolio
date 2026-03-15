@@ -85,11 +85,16 @@ Atualizado em: 2026-03-14
 - /api/marketplace/items
 - /api/marketplace/orders
 
-### OpenClaw
+### OpenClaw (canônico)
 - /api/openclaw
 - /api/openclaw/auth
+- /api/openclaw/status
+- /api/openclaw/agents
+- /api/openclaw/sessions
+- /api/openclaw/automations
+- /api/openclaw/podcast
 
-### Prototype (telemetria/integração interna)
+### Prototype (compatibilidade/alias)
 - /api/prototype/status
 - /api/prototype/agents
 - /api/prototype/sessions
@@ -99,7 +104,7 @@ Atualizado em: 2026-03-14
 ### Observabilidade
 - /api/telemetry/web-vitals
 
-## 6) Unificação feita nesta etapa
+## 6) Unificação feita
 
 - Removidas rotas duplicadas de login:
   - /login/index.php
@@ -109,3 +114,5 @@ Atualizado em: 2026-03-14
   - `app/home-page-client.tsx`
 - Criado sitemap técnico para buscadores:
   - `app/sitemap.ts`
+- API unificada com base canônica em `api/openclaw/*` para status/agents/sessions/automations/podcast.
+- `api/prototype/*` mantida apenas como alias de compatibilidade para não quebrar integrações antigas.

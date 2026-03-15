@@ -8,7 +8,7 @@ export default function OpenClawSessionsPage() {
   const [sessions, setSessions] = useState<SessionItem[]>([]);
 
   useEffect(() => {
-    fetch("/api/prototype/sessions")
+    fetch("/api/openclaw/sessions")
       .then((r) => r.json())
       .then((d) => setSessions(d.sessions || []))
       .catch(() => setSessions([]));

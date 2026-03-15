@@ -14,7 +14,7 @@ export default function OpenClawStatusPage() {
   const [status, setStatus] = useState<Status | null>(null);
 
   useEffect(() => {
-    fetch("/api/prototype/status")
+    fetch("/api/openclaw/status")
       .then((r) => r.json())
       .then((d) => setStatus(d))
       .catch(() => setStatus(null));

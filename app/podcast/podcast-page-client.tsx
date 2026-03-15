@@ -40,7 +40,7 @@ export default function PodcastPage() {
   useEffect(() => {
     const controller = new AbortController();
     const loadEpisodes = () => {
-      fetch("/api/prototype/podcast", { signal: controller.signal })
+      fetch("/api/openclaw/podcast", { signal: controller.signal })
         .then((r) => r.json())
         .then((d) => {
           if (Array.isArray(d.episodes) && d.episodes.length) setEpisodes(d.episodes);

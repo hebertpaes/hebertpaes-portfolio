@@ -8,7 +8,7 @@ export default function OpenClawAutomationsPage() {
   const [items, setItems] = useState<Item[]>([]);
 
   useEffect(() => {
-    fetch("/api/prototype/automations")
+    fetch("/api/openclaw/automations")
       .then((r) => r.json())
       .then((d) => setItems(d.automations || []))
       .catch(() => setItems([]));

@@ -10,6 +10,12 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
   },
+  async redirects() {
+    return [
+      { source: "/login/index.php", destination: "/login", permanent: true },
+      { source: "/login/index.py", destination: "/login", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

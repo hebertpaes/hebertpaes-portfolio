@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import ThemeToggle from "./components/theme-toggle";
 
 const products = [
@@ -7,11 +9,6 @@ const products = [
     name: "Chat",
     href: "/chat",
     description: "Atendimento inteligente para conversas, suporte e automações com contexto.",
-  },
-  {
-    name: "AI Platform",
-    href: "/ai-platform",
-    description: "Base técnica para criar, testar e operar produtos com IA em escala.",
   },
   {
     name: "Notícias",
@@ -37,7 +34,15 @@ const pillars = [
   "Marca HebertPaes em primeiro plano",
 ];
 
+const quickActions = [
+  { name: "Abrir Chat", href: "/chat" },
+  { name: "Marketplace", href: "/marketplace" },
+  { name: "Entrar", href: "/dashboard" },
+];
+
 export default function HebertPaesHomepage() {
+  const [showPopup, setShowPopup] = useState(false);
+
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -74,12 +79,6 @@ export default function HebertPaesHomepage() {
             >
               Entrar
             </a>
-            <a
-              href="/ai-platform"
-              className="rounded-full bg-[var(--text-primary)] px-4 py-2 text-sm font-medium text-[var(--bg-primary)] transition hover:opacity-90"
-            >
-              Explorar
-            </a>
           </div>
         </div>
       </header>
@@ -98,21 +97,6 @@ export default function HebertPaesHomepage() {
             <p className="mt-6 max-w-2xl text-base leading-7 text-[var(--text-primary)]/70 sm:text-lg">
               A homepage da HebertPaes foi redesenhada para ser objetiva, elegante e profissional, com navegação clara para os produtos principais e foco em conversão.
             </p>
-
-            <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-              <a
-                href="/chat"
-                className="rounded-full bg-[var(--text-primary)] px-6 py-3 text-sm font-medium text-[var(--bg-primary)] transition hover:opacity-90"
-              >
-                Abrir Chat
-              </a>
-              <a
-                href="/marketplace"
-                className="rounded-full border border-[var(--border-primary)] bg-[var(--bg-surface)] px-6 py-3 text-sm font-medium transition hover:bg-[var(--bg-muted)]"
-              >
-                Ver Marketplace
-              </a>
-            </div>
           </div>
 
           <div className="rounded-3xl border border-[var(--border-primary)] bg-[var(--bg-surface)] p-7 shadow-xl shadow-black/10">
@@ -153,6 +137,31 @@ export default function HebertPaesHomepage() {
           </div>
         </section>
       </main>
+
+      <div className="fixed bottom-6 right-6 z-40">
+        {showPopup ? (
+          <div className="mb-3 w-56 rounded-2xl border border-[var(--border-primary)] bg-[var(--bg-surface)]/95 p-2 shadow-2xl backdrop-blur">
+            {quickActions.map((action) => (
+              <a
+                key={action.name}
+                href={action.href}
+                className="block rounded-xl px-4 py-3 text-sm font-medium text-[var(--text-primary)]/85 transition hover:bg-[var(--bg-muted)]"
+              >
+                {action.name}
+              </a>
+            ))}
+          </div>
+        ) : null}
+
+        <button
+          type="button"
+          onClick={() => setShowPopup((prev) => !prev)}
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--text-primary)] text-xl font-bold text-[var(--bg-primary)] shadow-xl transition hover:scale-105"
+          aria-label="Abrir ações rápidas"
+        >
+          {showPopup ? "×" : "+"}
+        </button>
+      </div>
     </div>
   );
 }

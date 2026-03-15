@@ -75,7 +75,7 @@ export async function fetchRealtimeSources(query: string) {
     sources.push(
       {
         title: `Resumo em tempo real para: ${query}`,
-        url: "https://hebertpaes.com/ai-platform",
+        url: "https://hebertpaes.com/chat",
         snippet: "Conector de fontes externas temporariamente indisponível; exibindo fallback local inteligente.",
         source: "Hebert IA Index",
       },

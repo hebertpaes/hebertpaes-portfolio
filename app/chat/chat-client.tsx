@@ -1,20 +1,39 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ThemeToggle from "../components/theme-toggle";
 
+type Provider = "openai" | "claude" | "gemini" | "llama" | "mistral";
 type Msg = { role: "user" | "assistant"; text: string };
 
+const providerLabel: Record<Provider, string> = {
+  openai: "OpenAI",
+  claude: "Claude",
+  gemini: "Gemini",
+  llama: "Llama",
+  mistral: "Mistral",
+};
+
 export default function ChatClient() {
-  const [model, setModel] = useState("openai");
+  const [model, setModel] = useState<Provider>("openai");
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [selectedVoice, setSelectedVoice] = useState("");
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [messages, setMessages] = useState<Msg[]>([
-    { role: "assistant", text: "Olá! Sou o agente IA do hebertpaes.com. Como posso ajudar?" },
+    { role: "assistant", text: "Olá! Sou o assistente HebertPaes. Como posso ajudar hoje?" },
   ]);
+
+  const suggestions = useMemo(
+    () => [
+      "Crie um plano de estudos de IA para 30 dias",
+      "Escreva um post sobre automação para negócios locais",
+      "Monte uma estratégia de lançamento para curso online",
+      "Resuma as principais notícias de tecnologia da semana",
+    ],
+    [],
+  );
 
   useEffect(() => {
     if (typeof window === "undefined" || !window.speechSynthesis) return;
@@ -36,17 +55,19 @@ export default function ChatClient() {
     };
   }, [selectedVoice]);
 
-  async function send() {
-    if (!input.trim() || loading) return;
-    const text = input.trim();
-    setInput("");
-    setMessages((prev) => [...prev, { role: "user", text }]);
+  async function send(textArg?: string) {
+    const finalText = (textArg ?? input).trim();
+    if (!finalText || loading) return;
+
+    if (!textArg) setInput("");
+    setMessages((prev) => [...prev, { role: "user", text: finalText }]);
     setLoading(true);
+
     try {
       const res = await fetch("/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: text, model }),
+        body: JSON.stringify({ prompt: finalText, model }),
       });
       const data = await res.json();
       setMessages((prev) => [...prev, { role: "assistant", text: data.reply || "Sem resposta no momento." }]);
@@ -96,75 +117,133 @@ export default function ChatClient() {
   }
 
   return (
-    <main className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-300">
-      <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-6">
-        <header className="flex items-center justify-between rounded-2xl border border-[var(--border-primary)] bg-[var(--bg-surface)] p-4">
-          <div>
-            <h1 className="text-2xl font-black">HebertPaes AI Chat</h1>
-            <p className="text-sm text-[var(--text-secondary)]">Modo dark/light com voz integrada para todos os modelos.</p>
+    <main className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+      <div className="mx-auto grid min-h-screen max-w-7xl grid-cols-1 md:grid-cols-[260px_1fr]">
+        <aside className="border-r border-[var(--border-primary)] bg-[var(--bg-surface)] p-4">
+          <button
+            type="button"
+            onClick={() => setMessages([{ role: "assistant", text: "Nova conversa iniciada. Como posso ajudar?" }])}
+            className="mb-4 w-full rounded-xl border border-[var(--border-primary)] bg-[var(--bg-primary)] px-3 py-2 text-left text-sm font-medium hover:bg-[var(--bg-muted)]"
+          >
+            + Nova conversa
+          </button>
+
+          <div className="space-y-2">
+            <div className="rounded-lg bg-[var(--bg-primary)] px-3 py-2 text-sm">Planejamento de curso</div>
+            <div className="rounded-lg bg-[var(--bg-primary)] px-3 py-2 text-sm">Estratégia de vendas</div>
+            <div className="rounded-lg bg-[var(--bg-primary)] px-3 py-2 text-sm">Resumo de notícias</div>
           </div>
-          <ThemeToggle />
-        </header>
+        </aside>
 
-        <section className="rounded-2xl border border-[var(--border-primary)] bg-[var(--bg-muted)] p-4">
-          <div className="mb-3 flex flex-wrap items-center gap-2 text-sm">
-            <span className="text-[var(--text-secondary)]">Modelo:</span>
-            <select value={model} onChange={(e) => setModel(e.target.value)} className="rounded-lg border border-[var(--border-primary)] bg-[var(--bg-surface)] px-2 py-1">
-              <option value="openai">OpenAI</option>
-              <option value="claude">Claude</option>
-              <option value="gemini">Gemini</option>
-              <option value="llama">Llama</option>
-              <option value="mistral">Mistral</option>
-            </select>
+        <section className="flex min-h-screen flex-col">
+          <header className="flex items-center justify-between border-b border-[var(--border-primary)] px-4 py-3">
+            <div className="flex items-center gap-2">
+              <h1 className="text-base font-semibold">HebertPaes Chat</h1>
+              <span className="rounded-full border border-[var(--border-primary)] px-2 py-0.5 text-xs text-[var(--text-secondary)]">
+                {providerLabel[model]}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <select
+                value={model}
+                onChange={(e) => setModel(e.target.value as Provider)}
+                className="rounded-lg border border-[var(--border-primary)] bg-[var(--bg-surface)] px-2 py-1 text-sm"
+              >
+                <option value="openai">OpenAI</option>
+                <option value="claude">Claude</option>
+                <option value="gemini">Gemini</option>
+                <option value="llama">Llama</option>
+                <option value="mistral">Mistral</option>
+              </select>
+              <ThemeToggle />
+            </div>
+          </header>
 
-            <span className="ml-2 text-[var(--text-secondary)]">Voz:</span>
-            <select
-              value={selectedVoice}
-              onChange={(e) => setSelectedVoice(e.target.value)}
-              className="max-w-[220px] rounded-lg border border-[var(--border-primary)] bg-[var(--bg-surface)] px-2 py-1"
-            >
-              {voices.length === 0 && <option value="">Voz padrão</option>}
-              {voices.map((v) => (
-                <option key={v.name} value={v.name}>{v.name} ({v.lang})</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="h-[55vh] space-y-3 overflow-y-auto rounded-xl border border-[var(--border-primary)] bg-[var(--bg-surface)] p-3">
-            {messages.map((m, i) => (
-              <div key={`${m.role}-${i}`} className={m.role === "user" ? "ml-auto max-w-[85%] rounded-xl bg-cyan-500/20 p-3" : "max-w-[85%] rounded-xl bg-[var(--bg-muted)] p-3"}>
-                {m.text}
+          <div className="flex-1 overflow-y-auto px-4 py-6">
+            {messages.length <= 1 && (
+              <div className="mb-6">
+                <h2 className="text-2xl font-semibold">Como posso ajudar hoje?</h2>
+                <div className="mt-4 grid gap-2 md:grid-cols-2">
+                  {suggestions.map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => send(s)}
+                      className="rounded-xl border border-[var(--border-primary)] bg-[var(--bg-surface)] px-3 py-3 text-left text-sm hover:bg-[var(--bg-muted)]"
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
               </div>
-            ))}
+            )}
+
+            <div className="space-y-4">
+              {messages.map((m, i) => (
+                <div key={`${m.role}-${i}`} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+                  <div
+                    className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-7 ${
+                      m.role === "user"
+                        ? "bg-cyan-500/20"
+                        : "border border-[var(--border-primary)] bg-[var(--bg-surface)]"
+                    }`}
+                  >
+                    {m.text}
+                  </div>
+                </div>
+              ))}
+              {loading && (
+                <div className="text-sm text-[var(--text-secondary)]">Gerando resposta...</div>
+              )}
+            </div>
           </div>
 
-          <div className="mt-3 flex flex-wrap gap-2">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && send()}
-              placeholder="Digite sua mensagem..."
-              className="min-w-[260px] flex-1 rounded-xl border border-[var(--border-primary)] bg-[var(--bg-surface)] px-3 py-2 text-sm"
-            />
-            <button
-              type="button"
-              onClick={startVoiceInput}
-              disabled={isListening}
-              className="rounded-xl bg-violet-500 px-4 py-2 text-sm font-bold text-white disabled:opacity-60"
-            >
-              {isListening ? "Ouvindo..." : "🎤 Voz"}
-            </button>
-            <button
-              type="button"
-              onClick={speakLastAssistant}
-              className="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-bold text-black"
-            >
-              🔊 Ouvir
-            </button>
-            <button onClick={send} disabled={loading} className="rounded-xl bg-[var(--accent)] px-4 py-2 text-sm font-bold text-black disabled:opacity-60">
-              {loading ? "..." : "Enviar"}
-            </button>
-          </div>
+          <footer className="border-t border-[var(--border-primary)] p-4">
+            <div className="mb-2 flex flex-wrap items-center gap-2">
+              <select
+                value={selectedVoice}
+                onChange={(e) => setSelectedVoice(e.target.value)}
+                className="max-w-[230px] rounded-lg border border-[var(--border-primary)] bg-[var(--bg-surface)] px-2 py-1 text-xs"
+              >
+                {voices.length === 0 && <option value="">Voz padrão</option>}
+                {voices.map((v) => (
+                  <option key={v.name} value={v.name}>{v.name} ({v.lang})</option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={startVoiceInput}
+                disabled={isListening}
+                className="rounded-lg bg-violet-500 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-60"
+              >
+                {isListening ? "Ouvindo..." : "🎤 Falar"}
+              </button>
+              <button
+                type="button"
+                onClick={speakLastAssistant}
+                className="rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-black"
+              >
+                🔊 Ouvir resposta
+              </button>
+            </div>
+
+            <div className="flex gap-2">
+              <input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && send()}
+                placeholder="Pergunte qualquer coisa..."
+                className="w-full rounded-xl border border-[var(--border-primary)] bg-[var(--bg-surface)] px-4 py-3 text-sm"
+              />
+              <button
+                onClick={() => send()}
+                disabled={loading || !input.trim()}
+                className="rounded-xl bg-[var(--accent)] px-4 py-3 text-sm font-bold text-black disabled:opacity-60"
+              >
+                Enviar
+              </button>
+            </div>
+          </footer>
         </section>
       </div>
     </main>

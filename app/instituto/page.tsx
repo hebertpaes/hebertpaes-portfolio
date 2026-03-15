@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Instituto3D from "./Instituto3D";
+import MapaInstituto from "./MapaInstituto";
 
 export const metadata: Metadata = {
   title: "Instituto Hélio Marinho | Projeto Arquitetônico",
@@ -68,16 +69,22 @@ export default function InstitutoPage() {
           </article>
         </div>
 
+        <div className="mt-8 rounded-2xl border border-white/10 bg-slate-900/60 p-5">
+          <h3 className="text-lg font-semibold">Implantação no mapa (Google API)</h3>
+          <p className="mt-2 text-sm text-slate-300">A área branca do mapa pode ser usada como referência de implantação preliminar do volume do instituto.</p>
+          <div className="mt-4">
+            <MapaInstituto />
+          </div>
+        </div>
+
         <div className="mt-8 rounded-2xl border border-cyan-400/30 bg-cyan-900/20 p-5 text-sm text-cyan-100">
-          <p className="font-semibold">Link de referência geográfica</p>
-          <a
-            className="mt-2 inline-block underline underline-offset-4"
-            href="https://earth.google.com/web/@-15.66648775,-56.13251649,189.69719844a,730.19274556d,35y,0h,0t,0r/data=CgRCAggBMikKJwolCiExakstMk45QlVtVG5RSWhDbk9MZVVEcGVIa3dkckhwRnMgAToDCgEwQgIIAEoHCIXd1kwQAQ?authuser=0"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Abrir localização no Google Earth
-          </a>
+          <p className="font-semibold">Comandos para a Vy/OpenClaw executar deploy</p>
+          <pre className="mt-3 overflow-x-auto rounded-xl border border-cyan-300/30 bg-slate-950/80 p-3 text-xs text-cyan-100">{`cd ~/workspace/hebertpaes-portfolio
+npm install
+npm run build
+# publicar no provider (Vercel/Cloudflare Pages) com branch main
+# validar rota:
+# https://hebertpaes.com/instituto`}</pre>
         </div>
       </section>
     </main>

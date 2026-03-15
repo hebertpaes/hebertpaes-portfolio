@@ -5,6 +5,7 @@ const baseUrl = "https://hebertpaes.com";
 const routes = [
   "/",
   "/chat",
+  "/instituto",
   "/noticias",
   "/cursos",
   "/cursos/minha-area",
